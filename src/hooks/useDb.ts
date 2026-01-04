@@ -14,9 +14,9 @@ function createAuthedSupabaseClient(accessToken: string | null) {
   });
 }
 
-export function useDb(userId: string) {
+export function useDb(userId: string | undefined | null) {
   const queryClient = useQueryClient();
-  const { getToken } = useAuth();
+  const { getToken } = useAuth(); // get the clerk JWT
 
   const getSupabase = async () => {
     const accessToken = await getToken({ template: "supabase" });
@@ -29,10 +29,12 @@ export function useDb(userId: string) {
     return createAuthedSupabaseClient(accessToken);
   };
 
-  const userProfileQuery = useQuery({
+  const getUserProfile = useQuery({
     queryKey: ["userProfile", userId],
     enabled: Boolean(userId),
     queryFn: async () => {
+      if (!userId) throw new Error("User ID is required to fetch user profile");
+
       const supabase = await getSupabase();
       const response = await supabase.from("users").select().eq("id", userId).single();
       return response;
@@ -41,10 +43,15 @@ export function useDb(userId: string) {
 
   const createUserProfile = useMutation({
     mutationFn: async (displayName: string) => {
+      if (!userId) throw new Error("User ID is required to modify user profile");
+
       const supabase = await getSupabase();
-      const { error } = await supabase
-        .from("users")
-        .insert({ id: userId, displayName, createdAt: new Date().toISOString() });
+      const { error } = await supabase.from("users").insert({
+        id: userId,
+        displayName,
+        createdAt: new Date().toISOString(),
+        lastLoggedIn: new Date().toISOString(),
+      });
 
       return error;
     },
@@ -53,8 +60,41 @@ export function useDb(userId: string) {
     },
   });
 
+  const updateDisplayName = useMutation({
+    mutationFn: async (displayName: string) => {
+      if (!userId) throw new Error("User ID is required to modify user profile");
+
+      const supabase = await getSupabase();
+      const { error } = await supabase.from("users").update({ displayName }).eq("id", userId);
+
+      return { error };
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["userProfile", userId] });
+    },
+  });
+
+  const updateLastLogin = useMutation({
+    mutationFn: async () => {
+      if (!userId) throw new Error("User ID is required to modify user profile");
+
+      const supabase = await getSupabase();
+      const { error } = await supabase
+        .from("users")
+        .update({ lastLoggedIn: new Date().toISOString() })
+        .eq("id", userId);
+
+      return { error };
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["userProfile", userId] });
+    },
+  });
+
   return {
-    userProfileQuery,
+    getUserProfile,
     createUserProfile,
+    updateDisplayName,
+    updateLastLogin,
   };
 }

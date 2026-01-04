@@ -2,18 +2,35 @@ import { useClerkAuth } from "@/auth/clerk";
 import { AvatarButton } from "@/components/AvatarButton";
 import { SignIn } from "@/components/SignIn";
 import { SignUp } from "@/components/SignUp";
+import { useDb } from "@/hooks/useDb";
+import { useUserActions } from "@/stateStore/user";
 import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 
 export const Route = createRootRoute({
   component: RootComponent,
 });
 
 function RootComponent() {
-  const { authed } = useClerkAuth();
+  const { authed, user } = useClerkAuth();
+  const { getUserProfile, updateLastLogin } = useDb(user?.id);
+  const { setUserId } = useUserActions();
 
-  // we will add the user's username to the nav later
-  // this will be stored in the supabase db and synced with clerk on sign up
-  // they will be able to change it in their profile settings later as well
+  useEffect(() => {
+    if (!authed) return;
+    if (!user) return;
+
+    setUserId(user.id);
+  }, [authed, user]);
+
+  useEffect(() => {
+    if (user?.id) {
+      updateLastLogin.mutate();
+    }
+  }, [user?.id]);
+
+  const profileFetching = getUserProfile.isFetching;
 
   return (
     <>
@@ -26,9 +43,14 @@ function RootComponent() {
                 <span className="text-accent">locke</span>-r
               </h1>
             </div>
-            <div>
-              <AvatarButton />
-            </div>
+
+            {profileFetching ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <div className="flex gap-2 place-items-center">
+                {getUserProfile.data?.data?.displayName} <AvatarButton />
+              </div>
+            )}
           </nav>
           <Outlet />
         </>
