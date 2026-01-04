@@ -17,15 +17,7 @@ export const useRoutes = (regionName: string | undefined) => {
       })
     ).then((locations) => {
       return locations.map((location) => {
-        const name = location.name
-          .replace(regionName + "-", "")
-          .split("-")
-          .map((word) =>
-            word === "ss" || word === "hq" || word === "gts"
-              ? word.toUpperCase()
-              : word.charAt(0).toUpperCase() + word.slice(1)
-          )
-          .join(" ");
+        const name = location.names.find((n) => n.language.name === "en")?.name || location.name;
 
         const areas = location.areas.map((area) => area.name);
 
