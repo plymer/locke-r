@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { useDb } from "@/hooks/useDb";
+import { useDbByUser } from "@/hooks/useDbByUser";
 import { useClerkAuth } from "@/auth/clerk";
 
 import { Loader2, Sparkles } from "lucide-react";
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
   const { user } = useClerkAuth();
-  const { getUserProfile, getUserSessions, createUserSession } = useDb(user?.id);
+  const { getUserProfile, getUserSessions, createUserSession } = useDbByUser(user?.id);
   const showDisplayNameModal = useShowDisplayNameModal();
 
   const profileData = getUserProfile.data;

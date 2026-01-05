@@ -1,20 +1,8 @@
-import type { Database } from "@/lib/supabase";
+import { supabase } from "@/lib/utils";
 import { useAuth } from "@clerk/clerk-react";
-import { createClient } from "@supabase/supabase-js";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
-
-function createAuthedSupabaseClient(accessToken: string | null) {
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
-    global: {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    },
-  });
-}
-
-export function useDb(userId: string | undefined | null) {
+export function useDbByUser(userId: string | undefined | null) {
   const queryClient = useQueryClient();
   const { getToken } = useAuth(); // get the clerk JWT
 
@@ -26,7 +14,7 @@ export function useDb(userId: string | undefined | null) {
       );
     }
 
-    return createAuthedSupabaseClient(accessToken);
+    return supabase(accessToken);
   };
 
   const getUserProfile = useQuery({
