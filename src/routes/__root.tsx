@@ -3,12 +3,19 @@ import { AvatarButton } from "@/components/AvatarButton";
 import { SignIn } from "@/components/SignIn";
 import { SignUp } from "@/components/SignUp";
 import { useDbByUser } from "@/hooks/useDbByUser";
+import type { useSessionData } from "@/hooks/useSessionData";
 import { useUserActions } from "@/stateStore/user";
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 
-export const Route = createRootRoute({
+interface RouterContext {
+  auth: ReturnType<typeof useClerkAuth> | undefined;
+  sessionIds?: string[];
+  sessionData: ReturnType<typeof useSessionData> | undefined;
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
 });
 

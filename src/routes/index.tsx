@@ -8,6 +8,7 @@ import { SetDisplayName } from "@/components/SetDisplayName";
 import { useShowDisplayNameModal } from "@/stateStore/modals";
 import { Button } from "@/components/ui/Button";
 import { SessionCard } from "@/components/SessionCard";
+import { useSessionData } from "@/hooks/useSessionData";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -15,7 +16,8 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
   const { user } = useClerkAuth();
-  const { getUserProfile, getUserSessions, createUserSession } = useDbByUser(user?.id);
+  const { getUserProfile } = useDbByUser(user?.id);
+  const { createUserSession, getUserSessions } = useSessionData();
   const showDisplayNameModal = useShowDisplayNameModal();
 
   const profileData = getUserProfile.data;

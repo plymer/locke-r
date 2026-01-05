@@ -1,4 +1,4 @@
-import { useDb } from "@/hooks/useDb";
+import { useDbByUser } from "@/hooks/useDbByUser";
 import { useEffect, useState } from "react";
 import { Label } from "./ui/Label";
 import { Input } from "./ui/Input";
@@ -10,7 +10,7 @@ import { useModalsActions } from "@/stateStore/modals";
 
 export const SetDisplayName = () => {
   const userId = useUserId();
-  const { getUserProfile, createUserProfile, updateDisplayName } = useDb(userId);
+  const { getUserProfile, createUserProfile, updateDisplayName } = useDbByUser(userId);
   const { toggleDisplayNameModal } = useModalsActions();
 
   const [displayName, setDisplayName] = useState(getUserProfile.data?.data?.displayName || "");

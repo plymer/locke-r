@@ -8,9 +8,10 @@ import { Loader2 } from "lucide-react";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
+import { useSessionData } from "./hooks/useSessionData";
 
 // Create a new router instance
-const router = createRouter({ routeTree });
+const router = createRouter({ routeTree, context: { auth: undefined, sessionIds: undefined, sessionData: undefined } });
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {
@@ -20,12 +21,9 @@ declare module "@tanstack/react-router" {
 }
 
 function InnerApp() {
-  const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-  if (!PUBLISHABLE_KEY) {
-    throw new Error("Missing Publishable Key");
-  }
   const auth = useClerkAuth();
+  const sessionData = useSessionData();
+  const sessionIds = sessionData.getUserSessions.data?.data?.map((s) => s.id) || [];
 
   if (auth.isLoading) {
     return (
@@ -36,7 +34,7 @@ function InnerApp() {
     );
   }
 
-  return <RouterProvider router={router} context={{ auth }} />;
+  return <RouterProvider router={router} context={{ auth, sessionIds, sessionData }} />;
 }
 
 const queryClient = new QueryClient();
