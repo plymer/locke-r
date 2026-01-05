@@ -36,7 +36,7 @@ function RootComponent() {
     <>
       {authed && (
         <>
-          <nav className="flex justify-between place-items-center max-w-2xl mx-auto bg-neutral-950 p-2 rounded-lg">
+          <nav className="flex justify-between place-items-center bg-neutral-950 p-2 rounded-t-lg">
             <div className="flex gap-2 place-items-center">
               <img src="./ultra-ball.png" className="size-8" />
               <h1 className="text-3xl">

@@ -91,10 +91,50 @@ export function useDb(userId: string | undefined | null) {
     },
   });
 
+  const getUserSessions = useQuery({
+    queryKey: ["userSessions", userId],
+    enabled: Boolean(userId),
+    queryFn: async () => {
+      if (!userId) throw new Error("User ID is required to fetch user sessions");
+
+      const supabase = await getSupabase();
+      const response = await supabase
+        .from("gameInstances")
+        .select()
+        .or(`owner.eq.${userId},playerTwo.eq.${userId},playerThree.eq.${userId}`);
+      return response;
+    },
+  });
+
+  const createUserSession = useMutation({
+    mutationFn: async (variables: { instanceName: string; gameGen: number; pkmnGameName: string }) => {
+      const { instanceName, gameGen, pkmnGameName } = variables;
+
+      if (!userId) throw new Error("User ID is required to create user session");
+
+      const supabase = await getSupabase();
+      const { error } = await supabase.from("gameInstances").insert({
+        owner: userId,
+        instanceName,
+        gameGen,
+        pkmnGameName,
+        createdAt: new Date().toISOString(),
+        lastPlayed: new Date().toISOString(),
+      });
+
+      return error;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["userSessions", userId] });
+    },
+  });
+
   return {
     getUserProfile,
     createUserProfile,
     updateDisplayName,
     updateLastLogin,
+    getUserSessions,
+    createUserSession,
   };
 }

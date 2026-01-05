@@ -41,6 +41,7 @@ export type Database = {
           instanceName: string;
           lastPlayed: string;
           owner: string;
+          pkmnGameName: string;
           playerThree: string | null;
           playerTwo: string | null;
         };
@@ -51,6 +52,7 @@ export type Database = {
           instanceName: string;
           lastPlayed?: string;
           owner: string;
+          pkmnGameName: string;
           playerThree?: string | null;
           playerTwo?: string | null;
         };
@@ -61,6 +63,7 @@ export type Database = {
           instanceName?: string;
           lastPlayed?: string;
           owner?: string;
+          pkmnGameName?: string;
           playerThree?: string | null;
           playerTwo?: string | null;
         };
@@ -93,6 +96,7 @@ export type Database = {
           ability: string | null;
           dateCaught: string;
           dateFainted: string | null;
+          gameInstance: string;
           gender: string | null;
           heldItem: string | null;
           id: number;
@@ -103,6 +107,7 @@ export type Database = {
           moveTwo: string | null;
           nature: string;
           nickname: string;
+          owner: string;
           soulLinkOne: number | null;
           soulLinkTwo: number | null;
           speciesId: number;
@@ -112,6 +117,7 @@ export type Database = {
           ability?: string | null;
           dateCaught?: string;
           dateFainted?: string | null;
+          gameInstance?: string;
           gender?: string | null;
           heldItem?: string | null;
           id?: number;
@@ -122,6 +128,7 @@ export type Database = {
           moveTwo?: string | null;
           nature: string;
           nickname: string;
+          owner: string;
           soulLinkOne?: number | null;
           soulLinkTwo?: number | null;
           speciesId: number;
@@ -131,6 +138,7 @@ export type Database = {
           ability?: string | null;
           dateCaught?: string;
           dateFainted?: string | null;
+          gameInstance?: string;
           gender?: string | null;
           heldItem?: string | null;
           id?: number;
@@ -141,12 +149,28 @@ export type Database = {
           moveTwo?: string | null;
           nature?: string;
           nickname?: string;
+          owner?: string;
           soulLinkOne?: number | null;
           soulLinkTwo?: number | null;
           speciesId?: number;
           status?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "monsters_gameInstance_fkey";
+            columns: ["gameInstance"];
+            isOneToOne: false;
+            referencedRelation: "gameInstances";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "monsters_owner_fkey";
+            columns: ["owner"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       parties: {
         Row: {
