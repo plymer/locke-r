@@ -3,7 +3,7 @@ import { AvatarButton } from "@/components/AvatarButton";
 import { SignIn } from "@/components/SignIn";
 import { SignUp } from "@/components/SignUp";
 import { useDbByUser } from "@/hooks/useDbByUser";
-import type { useSessionData } from "@/hooks/useSessionData";
+import type { SessionDataFetchers } from "@/lib/sessionData";
 import { useUserActions } from "@/stateStore/user";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
@@ -12,7 +12,7 @@ import { useEffect } from "react";
 interface RouterContext {
   auth: ReturnType<typeof useClerkAuth> | undefined;
   sessionIds?: string[];
-  sessionData: ReturnType<typeof useSessionData> | undefined;
+  sessionDataFetchers: SessionDataFetchers;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({

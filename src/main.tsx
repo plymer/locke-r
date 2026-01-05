@@ -9,9 +9,14 @@ import { Loader2 } from "lucide-react";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 import { useSessionData } from "./hooks/useSessionData";
+import { createSessionDataFetchers } from "./lib/sessionData";
+import { useSupabase } from "./hooks/useSupabase";
 
 // Create a new router instance
-const router = createRouter({ routeTree, context: { auth: undefined, sessionIds: undefined, sessionData: undefined } });
+const router = createRouter({
+  routeTree,
+  context: { auth: undefined, sessionIds: undefined, sessionDataFetchers: undefined! },
+});
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {
@@ -22,8 +27,12 @@ declare module "@tanstack/react-router" {
 
 function InnerApp() {
   const auth = useClerkAuth();
+  const getSupabase = useSupabase();
   const sessionData = useSessionData();
   const sessionIds = sessionData.getUserSessions.data?.data?.map((s) => s.id) || [];
+
+  // Create plain fetching functions for use in loaders
+  const sessionDataFetchers = createSessionDataFetchers(getSupabase);
 
   if (auth.isLoading) {
     return (
@@ -34,7 +43,7 @@ function InnerApp() {
     );
   }
 
-  return <RouterProvider router={router} context={{ auth, sessionIds, sessionData }} />;
+  return <RouterProvider router={router} context={{ auth, sessionIds, sessionDataFetchers }} />;
 }
 
 const queryClient = new QueryClient();

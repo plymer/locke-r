@@ -23,18 +23,13 @@ export const Route = createFileRoute("/session/$sessionId")({
     }
   },
   loader: async ({ params, context }) => {
-    const sessionData = context.sessionData?.getSingleSession(params.sessionId);
-    const sessionParties = context.sessionData?.getSessionParties(params.sessionId);
+    const { sessionId } = params;
+
+    // Use plain fetching functions from context (not hooks!)
+    const sessionData = await context.sessionDataFetchers.fetchSingleSession(sessionId);
+    const sessionParties = await context.sessionDataFetchers.fetchSessionParties(sessionId);
 
     return { sessionData, sessionParties };
-
-    // const { sessionId } = params;
-    // const { getSingleSession, getSessionParties } = useSessionData();
-
-    // const sessionData = getSingleSession(sessionId);
-    // const sessionParties = getSessionParties(sessionId);
-
-    // return { sessionData, sessionParties };
   },
 });
 
@@ -44,18 +39,18 @@ function RouteComponent() {
 
   const { sessionData, sessionParties } = loaderData;
 
-  if (!sessionData) return <div>Session not found.</div>;
+  if (!sessionData?.data) return <div>Session not found.</div>;
 
-  if (!sessionParties) return <div>We need to set up at least one party</div>;
+  if (!sessionParties?.data || sessionParties.data.length === 0) return <div>We need to set up at least one party</div>;
 
   return (
     <div className="bg-accent px-4 pt-2 pb-4 flex flex-col gap-2 rounded-b-lg">
-      <h1>{sessionData.data?.data?.instanceName}</h1>
+      <h1>{sessionData.data.instanceName}</h1>
       {/* <p>Session ID: {sessionId}</p> */}
       <div>
         <h2>Parties:</h2>
         <ul>
-          {sessionParties.data?.data?.map((party) => (
+          {sessionParties.data.map((party) => (
             <li key={party.id}>
               {party.owner} - Created at:{" "}
               {new Date(party.createdAt).toLocaleDateString("en-CA", { dateStyle: "short", timeStyle: "short" })}
