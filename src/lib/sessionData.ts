@@ -1,11 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "./supabase";
 
 /**
  * Plain data fetching functions (not hooks) that can be used in router loaders.
  * These should be passed through router context.
  */
 
-export const createSessionDataFetchers = (getSupabase: () => Promise<SupabaseClient>) => {
+export const createSessionDataFetchers = (getSupabase: () => Promise<SupabaseClient<Database>>) => {
   return {
     fetchSingleSession: async (sessionId: string) => {
       const supabase = await getSupabase();
