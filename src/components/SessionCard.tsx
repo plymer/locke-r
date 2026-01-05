@@ -1,6 +1,6 @@
 import { useDisplayNames } from "@/hooks/useDisplayNames";
 import type { SessionData } from "@/lib/types";
-
+import { useRouter } from "@tanstack/react-router";
 import { useUserId } from "@/stateStore/user";
 import { GameGenCard } from "./ui/GameGenCard";
 import { SessionUserList } from "./SessionUserList";
@@ -15,9 +15,15 @@ export const SessionCard = ({ sessionData }: Props) => {
   const userId = useUserId();
   const { createdAt, gameGen, instanceName, lastPlayed, pkmnGameName, owner, playerTwo, playerThree } = sessionData;
 
+  const router = useRouter();
+
   const displayNameList = useDisplayNames([owner, playerTwo, playerThree].filter(Boolean) as string[]);
 
   const userIsOwner = owner === userId;
+
+  const handlePlayClick = () => {
+    router.navigate({ to: "/session/$sessionId", params: { sessionId: sessionData.id } });
+  };
 
   return (
     <div className="bg-secondary text-black rounded-lg border-neutral-400 border flex flex-col">
@@ -40,7 +46,7 @@ export const SessionCard = ({ sessionData }: Props) => {
 
           <SessionUserList sessionOwner={owner} users={displayNameList?.data?.data} />
           <div className="mx-auto flex gap-2">
-            <Button>
+            <Button onClick={handlePlayClick}>
               <Play /> Play
             </Button>
             {userIsOwner && (
