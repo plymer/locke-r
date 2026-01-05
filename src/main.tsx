@@ -4,13 +4,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./index.css";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { ClerkWrapper, useClerkAuth } from "./auth/clerk";
-import { Loader2 } from "lucide-react";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 import { useSessionData } from "./hooks/useSessionData";
 import { createSessionDataFetchers } from "./lib/sessionData";
 import { useSupabase } from "./hooks/useSupabase";
+import Loading from "./components/icons/Loading";
 
 // Create a new router instance
 const router = createRouter({
@@ -37,7 +37,7 @@ function InnerApp() {
   if (auth.isLoading) {
     return (
       <div className="flex place-items-center gap-2 justify-center min-h-screen">
-        <Loader2 className="animate-spin" />
+        <Loading className="animate-spin" />
         Loading...
       </div>
     );

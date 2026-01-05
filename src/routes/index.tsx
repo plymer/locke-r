@@ -3,12 +3,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useDbByUser } from "@/hooks/useDbByUser";
 import { useClerkAuth } from "@/auth/clerk";
 
-import { Loader2, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { SetDisplayName } from "@/components/SetDisplayName";
 import { useShowDisplayNameModal } from "@/stateStore/modals";
 import { Button } from "@/components/ui/Button";
 import { SessionCard } from "@/components/SessionCard";
 import { useSessionData } from "@/hooks/useSessionData";
+import Loading from "@/components/icons/Loading";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -33,7 +34,7 @@ function RouteComponent() {
   if (profileFetching)
     return (
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-2 items-center justify-center text-center">
-        <Loader2 className="animate-spin" /> Getting your data...
+        <Loading className="animate-spin" /> Getting your data...
       </div>
     );
 
@@ -53,7 +54,7 @@ function RouteComponent() {
       <div className="grid max-md:grid-cols-1 md:grid-cols-2 gap-4">
         {sessionsFetching && (
           <div className="flex gap-2 items-center justify-center text-center col-span-2">
-            <Loader2 className="animate-spin" /> Getting your sessions...
+            <Loading className="animate-spin" /> Getting your sessions...
           </div>
         )}
         {!sessionsFetching && sessionsData?.data?.length === 0 && <p>No active sessions found.</p>}
