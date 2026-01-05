@@ -26,7 +26,7 @@ export const Route = createFileRoute("/party/create")({
 
 type PartyFormData = {
   name: string;
-  starter: string;
+  starter: number;
 };
 
 function RouteComponent() {
@@ -35,12 +35,14 @@ function RouteComponent() {
   const { data, error, fetchStatus } = getSingleSession(sessionId);
   const { data: pokemonList } = usePokemonData().listAll();
 
-  const { register, handleSubmit, reset } = useForm<PartyFormData>({
+  const { register, handleSubmit, reset, setValue, watch } = useForm<PartyFormData>({
     defaultValues: {
       name: "",
-      starter: "",
+      starter: 0,
     },
   });
+
+  const selectedStarter = watch("starter");
 
   if (fetchStatus === "fetching") {
     return (
@@ -72,13 +74,16 @@ function RouteComponent() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="starter">Starter</Label>
-            <Input id="starter" type="text" {...register("starter")} />
-            <p className="text-sm text-muted-foreground">
-              Available starters: {starters.map((s) => s.name).join(", ")}
-            </p>
+            <Label>Choose Your Starter</Label>
             {starters.map((starter) => (
-              <div className="flex gap-2 place-items-center">
+              <button
+                key={starter.number}
+                type="button"
+                onClick={() => setValue("starter", starter.number)}
+                className={`flex gap-2 place-items-center w-full rounded-lg p-2 transition-colors ${
+                  selectedStarter === starter.number ? "bg-primary/20 ring-2 ring-primary" : "hover:bg-primary/10"
+                }`}
+              >
                 <div className="relative pl-8">
                   <img
                     className="size-24 "
@@ -97,13 +102,13 @@ function RouteComponent() {
                   )}
                 </div>
                 <p>{starter.name}</p>
-              </div>
+              </button>
             ))}
           </div>
 
           <div className="flex gap-2">
-            <Button type="submit">
-              <Pokeball className="animate-spin" />
+            <Button type="submit" className="group">
+              <Pokeball className="group-hover:animate-spin" />
               Start!
             </Button>
             <Button type="button" onClick={() => reset()}>
