@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/session/$sessionId")({
   component: RouteComponent,
@@ -34,6 +34,7 @@ export const Route = createFileRoute("/session/$sessionId")({
 });
 
 function RouteComponent() {
+  const router = useRouter();
   const loaderData = Route.useLoaderData();
   if (!loaderData) return;
 
@@ -41,10 +42,13 @@ function RouteComponent() {
 
   if (!sessionData?.data) return <div>Session not found.</div>;
 
-  if (!sessionParties?.data || sessionParties.data.length === 0) return <div>We need to set up at least one party</div>;
+  if (!sessionParties?.data || sessionParties.data.length === 0) {
+    router.navigate({ to: `/party/create?sessionId=${sessionData.data.id}` });
+    return;
+  }
 
   return (
-    <div className="bg-accent px-4 pt-2 pb-4 flex flex-col gap-2 rounded-b-lg">
+    <div className="flex flex-col gap-2 rounded-b-lg">
       <h1>{sessionData.data.instanceName}</h1>
       {/* <p>Session ID: {sessionId}</p> */}
       <div>

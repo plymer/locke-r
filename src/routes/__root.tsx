@@ -5,7 +5,7 @@ import { SignUp } from "@/components/SignUp";
 import { useDbByUser } from "@/hooks/useDbByUser";
 import type { SessionDataFetchers } from "@/lib/sessionData";
 import { useUserActions } from "@/stateStore/user";
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext, Link } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 
@@ -44,12 +44,12 @@ function RootComponent() {
       {authed && (
         <>
           <nav className="flex justify-between place-items-center bg-neutral-950 p-2 rounded-t-lg">
-            <div className="flex gap-2 place-items-center">
+            <Link to="/" className="flex gap-2 place-items-center">
               <img src="/ultra-ball.png" className="size-8" />
               <h1 className="text-3xl">
                 <span className="text-accent">locke</span>-r
               </h1>
-            </div>
+            </Link>
 
             {profileFetching ? (
               <Loader2 className="animate-spin" />
@@ -59,7 +59,9 @@ function RootComponent() {
               </div>
             )}
           </nav>
-          <Outlet />
+          <div className="bg-accent px-4 pt-2 pb-4 rounded-b-lg">
+            <Outlet />
+          </div>
         </>
       )}
       {!authed && (

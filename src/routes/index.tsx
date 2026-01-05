@@ -42,7 +42,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="bg-accent px-4 pt-2 pb-4 flex flex-col gap-2 rounded-b-lg">
+    <div className="flex flex-col gap-2">
       <h1 className="text-2xl max-md:text-center">Welcome back, {profileData?.data?.displayName}!</h1>
 
       <Button variant="secondary" onClick={handleNewSessionClick}>
