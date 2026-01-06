@@ -1,7 +1,7 @@
 import { useDisplayNames } from "@/hooks/useDisplayNames";
 import type { SessionData } from "@/lib/types";
 import { useRouter } from "@tanstack/react-router";
-import { useUserId } from "@/stateStore/user";
+import { useUserId } from "@/state-store/user";
 import { GameGenCard } from "./ui/GameGenCard";
 import { SessionUserList } from "./SessionUserList";
 import { Button } from "./ui/Button";

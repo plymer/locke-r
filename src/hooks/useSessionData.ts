@@ -1,4 +1,4 @@
-import { useUserId } from "@/stateStore/user";
+import { useUserId } from "@/state-store/user";
 import { useSupabase } from "./useSupabase";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 

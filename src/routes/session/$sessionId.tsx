@@ -25,9 +25,10 @@ export const Route = createFileRoute("/session/$sessionId")({
   loader: async ({ params, context }) => {
     const { sessionId } = params;
 
-    // Use plain fetching functions from context (not hooks!)
-    const sessionData = await context.sessionDataFetchers.fetchSingleSession(sessionId);
-    const sessionParties = await context.sessionDataFetchers.fetchSessionParties(sessionId);
+    const { fetchSessionParties, fetchSingleSession } = context.sessionFns;
+
+    const sessionData = await fetchSingleSession(sessionId);
+    const sessionParties = await fetchSessionParties(sessionId);
 
     return { sessionData, sessionParties };
   },

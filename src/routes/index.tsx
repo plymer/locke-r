@@ -5,7 +5,7 @@ import { useClerkAuth } from "@/auth/clerk";
 
 import { Sparkles } from "lucide-react";
 import { SetDisplayName } from "@/components/SetDisplayName";
-import { useShowDisplayNameModal } from "@/stateStore/modals";
+import { useShowDisplayNameModal } from "@/state-store/modals";
 import { Button } from "@/components/ui/Button";
 import { SessionCard } from "@/components/SessionCard";
 import { useSessionData } from "@/hooks/useSessionData";

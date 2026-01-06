@@ -8,14 +8,20 @@ import { ClerkWrapper, useClerkAuth } from "./auth/clerk";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 import { useSessionData } from "./hooks/useSessionData";
-import { createSessionDataFetchers } from "./lib/sessionData";
+import { sessionDataFetchers } from "./lib/sessionData";
 import { useSupabase } from "./hooks/useSupabase";
 import Loading from "./components/icons/Loading";
+import { partyDataFetchers } from "./lib/partyData";
 
 // Create a new router instance
 const router = createRouter({
   routeTree,
-  context: { auth: undefined, sessionIds: undefined, sessionDataFetchers: undefined! },
+  context: {
+    auth: undefined,
+    sessionIds: undefined,
+    sessionFns: undefined!,
+    partyFns: undefined!,
+  },
 });
 
 // Register the router instance for type safety
@@ -25,14 +31,15 @@ declare module "@tanstack/react-router" {
   }
 }
 
-function InnerApp() {
+function App() {
   const auth = useClerkAuth();
   const getSupabase = useSupabase();
   const sessionData = useSessionData();
   const sessionIds = sessionData.getUserSessions.data?.data?.map((s) => s.id) || [];
 
   // Create plain fetching functions for use in loaders
-  const sessionDataFetchers = createSessionDataFetchers(getSupabase);
+  const sessionFns = sessionDataFetchers(getSupabase);
+  const partyFns = partyDataFetchers(getSupabase);
 
   if (auth.isLoading) {
     return (
@@ -43,7 +50,17 @@ function InnerApp() {
     );
   }
 
-  return <RouterProvider router={router} context={{ auth, sessionIds, sessionDataFetchers }} />;
+  return (
+    <RouterProvider
+      router={router}
+      context={{
+        auth,
+        sessionIds,
+        sessionFns,
+        partyFns,
+      }}
+    />
+  );
 }
 
 const queryClient = new QueryClient();
@@ -52,7 +69,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <ClerkWrapper>
-        <InnerApp />
+        <App />
       </ClerkWrapper>
     </QueryClientProvider>
   </StrictMode>

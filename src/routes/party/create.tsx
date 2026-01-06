@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
 import { GameGenCard } from "@/components/ui/GameGenCard";
 import { STARTERS_BY_GAME, STARTERS_BY_GEN } from "@/lib/starters";
-import { usePokemonData } from "@/hooks/usePokemonData";
+import { usePokemonData } from "@/hooks/poke-api/usePokemonApiData";
 import { PokemonTypeBanner } from "@/components/ui/PokemonTypeBanner";
 import Pokeball from "@/components/icons/Pokeball";
+import { usePartyData } from "@/hooks/usePartyData";
 
 type CreatePartySearch = {
   sessionId: string;
@@ -34,6 +35,8 @@ function RouteComponent() {
   const { getSingleSession } = useSessionData();
   const { data, error, fetchStatus } = getSingleSession(sessionId);
   const { data: pokemonList } = usePokemonData().listAll();
+
+  const { createNewParty } = usePartyData();
 
   const { register, handleSubmit, reset, setValue, watch } = useForm<PartyFormData>({
     defaultValues: {
@@ -60,6 +63,14 @@ function RouteComponent() {
   const { gameGen, pkmnGameName, instanceName } = data.data;
 
   const starters = STARTERS_BY_GAME[pkmnGameName as keyof typeof STARTERS_BY_GAME] || STARTERS_BY_GEN[gameGen];
+
+  // const onSubmit = (formData: PartyFormData) => {
+  //   createNewParty.mutate({
+  //     sessionId,
+  //     partyName: formData.name,
+  //     starterPokemonNumber: formData.starter,
+  //   });
+  // };
 
   return (
     <div className="flex flex-col gap-2">
@@ -107,7 +118,12 @@ function RouteComponent() {
           </div>
 
           <div className="flex gap-2">
-            <Button type="submit" className="group">
+            <Button
+              type="button"
+              className="group"
+              disabled={!watch("name") || selectedStarter === 0}
+              onClick={() => void 0}
+            >
               <Pokeball className="group-hover:animate-spin" />
               Start!
             </Button>

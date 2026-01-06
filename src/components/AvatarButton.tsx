@@ -1,7 +1,7 @@
 import { UserButton } from "@clerk/clerk-react";
 import { UserRound } from "lucide-react";
 
-import { useModalsActions } from "@/stateStore/modals";
+import { useModalsActions } from "@/state-store/modals";
 
 export const AvatarButton = () => {
   const { toggleDisplayNameModal } = useModalsActions();

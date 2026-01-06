@@ -5,8 +5,8 @@ import { Input } from "./ui/Input";
 import { Button } from "./ui/Button";
 import { Loader2, Save, X } from "lucide-react";
 import { createPortal } from "react-dom";
-import { useUserId } from "@/stateStore/user";
-import { useModalsActions } from "@/stateStore/modals";
+import { useUserId } from "@/state-store/user";
+import { useModalsActions } from "@/state-store/modals";
 
 export const SetDisplayName = () => {
   const userId = useUserId();

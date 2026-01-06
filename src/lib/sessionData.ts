@@ -6,7 +6,7 @@ import type { Database } from "./supabase";
  * These should be passed through router context.
  */
 
-export const createSessionDataFetchers = (getSupabase: () => Promise<SupabaseClient<Database>>) => {
+export const sessionDataFetchers = (getSupabase: () => Promise<SupabaseClient<Database>>) => {
   return {
     fetchSingleSession: async (sessionId: string) => {
       const supabase = await getSupabase();
@@ -16,7 +16,7 @@ export const createSessionDataFetchers = (getSupabase: () => Promise<SupabaseCli
 
     fetchSessionParties: async (sessionId: string) => {
       const supabase = await getSupabase();
-      const response = await supabase.from("parties").select().eq("sessionId", sessionId);
+      const response = await supabase.from("parties").select().eq("gameInstance", sessionId);
       return response;
     },
 
@@ -31,4 +31,4 @@ export const createSessionDataFetchers = (getSupabase: () => Promise<SupabaseCli
   };
 };
 
-export type SessionDataFetchers = ReturnType<typeof createSessionDataFetchers>;
+export type SessionDataFetchers = ReturnType<typeof sessionDataFetchers>;
