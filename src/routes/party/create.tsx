@@ -11,8 +11,8 @@ import { usePokemonData } from "@/hooks/poke-api/usePokemonApiData";
 import { PokemonTypeBanner } from "@/components/ui/PokemonTypeBanner";
 import Pokeball from "@/components/icons/Pokeball";
 import { usePartyData } from "@/hooks/usePartyData";
-// import { useMoveData } from "@/hooks/poke-api/useMoveApiData";
 import type { PokemonGame, PokemonInsertData } from "@/lib/types";
+import { useUserId } from "@/state-store/user";
 
 type CreatePartySearch = {
   sessionId: string;
@@ -36,6 +36,7 @@ function RouteComponent() {
   const { sessionId } = Route.useSearch();
   const { getSingleSession } = useSessionData();
   const { data, error, fetchStatus } = getSingleSession(sessionId);
+  const userId = useUserId();
 
   const { getByNumber } = usePokemonData();
   // const { getByName } = useMoveData();
@@ -66,7 +67,7 @@ function RouteComponent() {
     return <div>Error loading session data.</div>;
   }
 
-  const { gameGen, pkmnGameName, instanceName, owner } = data.data;
+  const { gameGen, pkmnGameName, instanceName } = data.data;
 
   const starters = STARTERS_BY_GAME[pkmnGameName as keyof typeof STARTERS_BY_GAME] || STARTERS_BY_GEN[gameGen];
 
@@ -98,10 +99,10 @@ function RouteComponent() {
   };
 
   const onSubmit = (formData: PartyFormData) => {
-    if (!formData.partyName) return;
+    if (!formData.partyName || !userId) return;
 
     createNewParty.mutate({
-      userId: owner,
+      userId,
       sessionId,
       partyName: formData.partyName,
       starterPokemon: starterPokemonObject,

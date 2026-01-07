@@ -79,7 +79,7 @@ export const usePartyData = () => {
         .single();
 
       if (monsterError || !monsterData) {
-        throw new Error(monsterError?.message || "Failed to create starter Pokemon");
+        throw new Error(monsterError?.stack || "Failed to create starter Pokemon");
       }
 
       const monsterId = monsterData.id;
