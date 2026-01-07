@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/Button";
 import { SessionCard } from "@/components/SessionCard";
 import { useSessionData } from "@/hooks/useSessionData";
 import Loading from "@/components/icons/Loading";
+import Pokeball from "@/components/icons/Pokeball";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/Dialog";
+import { Input } from "@/components/ui/Input";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -47,22 +50,48 @@ function RouteComponent() {
     });
   };
 
+  const handleJoinSessionClick = () => {
+    // we will render a modal for joining a session with an invite code
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <h1 className="text-2xl max-md:text-center">Welcome back, {profileData?.data?.displayName}!</h1>
 
-      <Button variant="secondary" onClick={handleNewSessionClick}>
-        <Sparkles />
-        Start New Session
-      </Button>
+      <div className="grid grid-cols-2 gap-4">
+        <Button variant="secondary" onClick={handleNewSessionClick}>
+          <Sparkles />
+          Start New Session
+        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="secondary" onClick={handleJoinSessionClick}>
+              <Pokeball />
+              Join Session
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="text-black">
+            <div className="flex flex-col gap-4">
+              <h2 className="text-xl font-bold">Join a Session</h2>
+              <p>Enter the invite code provided by the session owner to join their session.</p>
 
-      <div className="grid max-md:grid-cols-1 md:grid-cols-2 gap-4">
-        {sessionsFetching && (
-          <div className="flex gap-2 items-center justify-center text-center col-span-2">
-            <Loading className="animate-spin" /> Getting your sessions...
-          </div>
-        )}
-        {!sessionsFetching && sessionsData?.data?.length === 0 && <p>No active sessions found.</p>}
+              <Input type="text" placeholder="Invite Code" />
+              <Button onClick={handleJoinSessionClick}>Join</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      {sessionsFetching && (
+        <div className="flex gap-2 items-center justify-center text-center col-span-2">
+          <Loading className="animate-spin" /> Getting your sessions...
+        </div>
+      )}
+      {!sessionsFetching && sessionsData?.data?.length === 0 && <p>No active sessions found.</p>}
+      <div className="grid max-md:grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-linear-120 from-neutral-600 to-neutral-800 rounded-lg">
+        <h1 className="text-3xl text-center font-bold col-span-2 border-b  pb-2">
+          Your Sessions ({sessionsData?.data?.length})
+        </h1>
         {!sessionsFetching &&
           sessionsData?.data?.length! > 0 &&
           sessionsData?.data?.map((session) => <SessionCard key={session.id} sessionData={session} />)}
