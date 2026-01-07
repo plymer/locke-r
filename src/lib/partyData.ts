@@ -24,6 +24,12 @@ export const partyDataFetchers = (getSupabase: () => Promise<SupabaseClient<Data
       const response = await supabase.from("parties").select().eq("gameInstance", sessionId);
       return response;
     },
+
+    getPartyById: async (partyId: string) => {
+      const supabase = await getSupabase();
+      const response = await supabase.from("parties").select().eq("id", partyId).single();
+      return response;
+    },
   };
 };
 

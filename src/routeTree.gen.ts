@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SessionCreateRouteImport } from './routes/session/create'
 import { Route as SessionSessionIdRouteImport } from './routes/session/$sessionId'
 import { Route as PartyCreateRouteImport } from './routes/party/create'
+import { Route as PartyEditPartyIdRouteImport } from './routes/party/edit.$partyId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const PartyCreateRoute = PartyCreateRouteImport.update({
   path: '/party/create',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PartyEditPartyIdRoute = PartyEditPartyIdRouteImport.update({
+  id: '/party/edit/$partyId',
+  path: '/party/edit/$partyId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/party/create': typeof PartyCreateRoute
   '/session/$sessionId': typeof SessionSessionIdRoute
   '/session/create': typeof SessionCreateRoute
+  '/party/edit/$partyId': typeof PartyEditPartyIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/party/create': typeof PartyCreateRoute
   '/session/$sessionId': typeof SessionSessionIdRoute
   '/session/create': typeof SessionCreateRoute
+  '/party/edit/$partyId': typeof PartyEditPartyIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,18 +61,30 @@ export interface FileRoutesById {
   '/party/create': typeof PartyCreateRoute
   '/session/$sessionId': typeof SessionSessionIdRoute
   '/session/create': typeof SessionCreateRoute
+  '/party/edit/$partyId': typeof PartyEditPartyIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/party/create' | '/session/$sessionId' | '/session/create'
+  fullPaths:
+    | '/'
+    | '/party/create'
+    | '/session/$sessionId'
+    | '/session/create'
+    | '/party/edit/$partyId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/party/create' | '/session/$sessionId' | '/session/create'
+  to:
+    | '/'
+    | '/party/create'
+    | '/session/$sessionId'
+    | '/session/create'
+    | '/party/edit/$partyId'
   id:
     | '__root__'
     | '/'
     | '/party/create'
     | '/session/$sessionId'
     | '/session/create'
+    | '/party/edit/$partyId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -72,6 +92,7 @@ export interface RootRouteChildren {
   PartyCreateRoute: typeof PartyCreateRoute
   SessionSessionIdRoute: typeof SessionSessionIdRoute
   SessionCreateRoute: typeof SessionCreateRoute
+  PartyEditPartyIdRoute: typeof PartyEditPartyIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -104,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PartyCreateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/party/edit/$partyId': {
+      id: '/party/edit/$partyId'
+      path: '/party/edit/$partyId'
+      fullPath: '/party/edit/$partyId'
+      preLoaderRoute: typeof PartyEditPartyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -112,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   PartyCreateRoute: PartyCreateRoute,
   SessionSessionIdRoute: SessionSessionIdRoute,
   SessionCreateRoute: SessionCreateRoute,
+  PartyEditPartyIdRoute: PartyEditPartyIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

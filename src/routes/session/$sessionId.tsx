@@ -5,7 +5,7 @@ import { GameGenCard } from "@/components/ui/GameGenCard";
 import { PokemonSummaryCard } from "@/components/ui/PokemonSummaryCard";
 import type { PokemonGame } from "@/lib/types";
 import { useUserId } from "@/state-store/user";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Edit } from "lucide-react";
 
 export const Route = createFileRoute("/session/$sessionId")({
@@ -71,6 +71,7 @@ export const Route = createFileRoute("/session/$sessionId")({
 });
 
 function RouteComponent() {
+  const router = useRouter();
   const loaderData = Route.useLoaderData();
 
   const userId = useUserId();
@@ -78,6 +79,10 @@ function RouteComponent() {
   const { sessionData, sessionParties, sessionUsers, sessionPokemon } = loaderData;
 
   if (!sessionData?.data) return <div>Session not found.</div>;
+
+  const handleEditPartyClick = (pId: string) => {
+    router.navigate({ to: "/party/edit/$partyId", params: { partyId: pId } });
+  };
 
   return (
     <div className="flex flex-col gap-2 rounded-b-lg">
@@ -123,7 +128,7 @@ function RouteComponent() {
           <Pokeball className="opacity-30" />
           <Pokeball className="opacity-10" />
         </div>
-        <ul>
+        <ul className="flex flex-col gap-4">
           {sessionParties?.data?.map((party) => {
             const { partyName, slotOne, slotTwo, slotThree, slotFour, slotFive, slotSix } = party;
 
@@ -144,13 +149,17 @@ function RouteComponent() {
                       ? new Date(user.lastLoggedIn).toLocaleString("en-CA", { dateStyle: "short", timeStyle: "short" })
                       : "Unknown"}
                   </p>
-                  <Button variant="secondary" disabled={userId !== user?.id}>
+                  <Button
+                    variant="secondary"
+                    disabled={userId !== user?.id}
+                    onClick={() => handleEditPartyClick(party.id)}
+                  >
                     <Edit />
                   </Button>
                 </div>
                 <div className="flex justify-center gap-2">
                   {pokemon?.map((p) => (
-                    <PokemonSummaryCard key={p.id} data={p} />
+                    <PokemonSummaryCard key={p.id} data={p} partyCount={pokemon?.length} showActions />
                   ))}
                 </div>
               </li>

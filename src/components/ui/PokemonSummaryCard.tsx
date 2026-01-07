@@ -8,13 +8,17 @@ import { Button } from "./Button";
 import { Popover, PopoverContent, PopoverTrigger } from "./Popover";
 import Pokeball from "../icons/Pokeball";
 import { ArrowRightLeft, Computer } from "lucide-react";
+import { useUserId } from "@/state-store/user";
 
 interface Props {
   data: PokemonData;
+  partyCount: number;
+  showActions?: boolean;
 }
 
-export const PokemonSummaryCard = ({ data }: Props) => {
-  const { nickname, speciesId, level, gender } = data;
+export const PokemonSummaryCard = ({ data, partyCount, showActions = false }: Props) => {
+  const { nickname, speciesId, level, gender, owner } = data;
+  const userId = useUserId();
 
   const { getByNumber } = usePokemonData();
 
@@ -51,22 +55,28 @@ export const PokemonSummaryCard = ({ data }: Props) => {
             <span className="text-sm">Lv {level}</span>
           </button>
         </PopoverTrigger>
-        <PopoverContent className="bg-secondary-foreground" sideOffset={-64}>
-          <div className="flex gap-2">
-            <Button>
-              <Computer />
-              Store
-            </Button>
-            <Button>
-              <Pokeball />
-              View
-            </Button>
-            <Button>
-              <ArrowRightLeft />
-              Swap
-            </Button>
-          </div>
-        </PopoverContent>
+        {showActions && (
+          <PopoverContent className="bg-secondary-foreground w-fit" sideOffset={-64}>
+            <div className="flex gap-2">
+              {userId === owner && (
+                <Button disabled={partyCount <= 1}>
+                  <Computer />
+                  Store
+                </Button>
+              )}
+              <Button>
+                <Pokeball />
+                View
+              </Button>
+              {userId === owner && (
+                <Button>
+                  <ArrowRightLeft />
+                  Swap
+                </Button>
+              )}
+            </div>
+          </PopoverContent>
+        )}
       </Popover>
     </div>
   );
