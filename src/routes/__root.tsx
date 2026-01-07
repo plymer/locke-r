@@ -14,6 +14,7 @@ import { useEffect } from "react";
 
 interface RouterContext {
   auth: ReturnType<typeof useClerkAuth> | undefined;
+  userId: string | null;
   sessionIds?: string[];
   sessionFns: SessionDataFetchers;
   partyFns: PartyDataFetchers;

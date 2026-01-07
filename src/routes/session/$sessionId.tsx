@@ -5,7 +5,7 @@ import { GameGenCard } from "@/components/ui/GameGenCard";
 import { PokemonSummaryCard } from "@/components/ui/PokemonSummaryCard";
 import type { PokemonGame } from "@/lib/types";
 import { useUserId } from "@/state-store/user";
-import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Edit } from "lucide-react";
 
 export const Route = createFileRoute("/session/$sessionId")({
@@ -19,15 +19,34 @@ export const Route = createFileRoute("/session/$sessionId")({
 
     const { sessionId } = params;
 
+    const { fetchSessionParties } = context.sessionFns;
+
     if (context.sessionIds === undefined) {
       throw redirect({ to: "/" });
     }
 
     const hasAccess = !!context.sessionIds?.includes(sessionId);
 
-    if (hasAccess) {
-      // user has access to this session
+    if (!hasAccess) {
+      throw redirect({ to: "/" });
+    }
+
+    // set up our redirect if the user does not have a party in this session
+
+    const partiesResponse = await fetchSessionParties(sessionId);
+
+    console.log("Parties response:", partiesResponse);
+    console.log("User ID:", context.userId);
+
+    const userParty = partiesResponse.data?.find((party) => party.owner === context.userId);
+
+    console.log("User party in session:", userParty);
+
+    if (userParty) {
+      // user has a party in this session, allow access
       return;
+    } else {
+      throw redirect({ to: "/party/create", search: { sessionId } });
     }
   },
   loader: async ({ params, context }) => {
@@ -69,7 +88,7 @@ export const Route = createFileRoute("/session/$sessionId")({
 });
 
 function RouteComponent() {
-  const router = useRouter();
+  // const router = useRouter();
   const loaderData = Route.useLoaderData();
 
   const userId = useUserId();
@@ -78,10 +97,12 @@ function RouteComponent() {
 
   if (!sessionData?.data) return <div>Session not found.</div>;
 
-  if (!sessionParties?.data || sessionParties.data.length === 0) {
-    router.navigate({ to: `/party/create?sessionId=${sessionData.data.id}` });
-    return;
-  }
+  // if (!sessionParties?.data || sessionParties.data.length === 0) {
+  //   console.log("No parties found, redirecting to create party");
+
+  //   router.navigate({ to: `/party/create?sessionId=${sessionData.data.id}` });
+  //   return;
+  // }
 
   return (
     <div className="flex flex-col gap-2 rounded-b-lg">
@@ -128,7 +149,7 @@ function RouteComponent() {
           <Pokeball className="opacity-10" />
         </div>
         <ul>
-          {sessionParties.data.map((party) => {
+          {sessionParties?.data?.map((party) => {
             const { partyName, slotOne, slotTwo, slotThree, slotFour, slotFive, slotSix } = party;
 
             const user = sessionUsers.data?.find((u) => u.id === party.owner);

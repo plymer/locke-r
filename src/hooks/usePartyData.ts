@@ -172,7 +172,13 @@ export const usePartyData = () => {
       return;
     },
     onSuccess: async (_data, { sessionId }) => {
-      await queryClient.invalidateQueries({ queryKey: ["userParty"] });
+      // Invalidate first
+      queryClient.invalidateQueries({ queryKey: ["userParty"] });
+      queryClient.invalidateQueries({ queryKey: ["sessionParties", sessionId] });
+
+      router.clearCache();
+
+      // Now navigate with the fresh data in cache
       router.navigate({ to: "/session/$sessionId", params: { sessionId } });
     },
     onError: (error) => {

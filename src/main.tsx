@@ -14,12 +14,14 @@ import Loading from "./components/icons/Loading";
 import { partyDataFetchers } from "./lib/partyData";
 import { userDataFetchers } from "./lib/userData";
 import { pokemonDataFetchers } from "./lib/pokemonData";
+import { useUserId } from "./state-store/user";
 
 // Create a new router instance
 const router = createRouter({
   routeTree,
   context: {
     auth: undefined,
+    userId: undefined!,
     sessionIds: undefined,
     sessionFns: undefined!,
     partyFns: undefined!,
@@ -37,6 +39,7 @@ declare module "@tanstack/react-router" {
 
 function App() {
   const auth = useClerkAuth();
+  const userId = useUserId();
   const getSupabase = useSupabase();
   const sessionData = useSessionData();
   const sessionIds = sessionData.getUserSessions.data?.data?.map((s) => s.id) || [];
@@ -61,6 +64,7 @@ function App() {
       router={router}
       context={{
         auth,
+        userId,
         sessionIds,
         sessionFns,
         partyFns,
