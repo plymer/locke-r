@@ -39,6 +39,7 @@ export type Database = {
           gameGen: number;
           id: string;
           instanceName: string;
+          inviteCode: string;
           lastPlayed: string;
           owner: string;
           pkmnGameName: string;
@@ -50,6 +51,7 @@ export type Database = {
           gameGen: number;
           id?: string;
           instanceName: string;
+          inviteCode: string;
           lastPlayed?: string;
           owner: string;
           pkmnGameName: string;
@@ -61,6 +63,7 @@ export type Database = {
           gameGen?: number;
           id?: string;
           instanceName?: string;
+          inviteCode?: string;
           lastPlayed?: string;
           owner?: string;
           pkmnGameName?: string;

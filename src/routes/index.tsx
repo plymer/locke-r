@@ -39,7 +39,12 @@ function RouteComponent() {
     );
 
   const handleNewSessionClick = () => {
-    createUserSession.mutate({ gameGen: 4, instanceName: "Test HG", pkmnGameName: "heartgold" });
+    createUserSession.mutate({
+      gameGen: 4,
+      instanceName: "Test HG",
+      pkmnGameName: "heartgold",
+      inviteCode: "bulbasaur-charmander-squirtle",
+    });
   };
 
   return (

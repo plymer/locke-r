@@ -51,8 +51,13 @@ export const useSessionData = () => {
   });
 
   const createUserSession = useMutation({
-    mutationFn: async (variables: { instanceName: string; gameGen: number; pkmnGameName: string }) => {
-      const { instanceName, gameGen, pkmnGameName } = variables;
+    mutationFn: async (variables: {
+      instanceName: string;
+      gameGen: number;
+      pkmnGameName: string;
+      inviteCode: string;
+    }) => {
+      const { instanceName, gameGen, pkmnGameName, inviteCode } = variables;
 
       if (!userId) throw new Error("User ID is required to create user session");
 
@@ -62,6 +67,7 @@ export const useSessionData = () => {
         instanceName,
         gameGen,
         pkmnGameName,
+        inviteCode,
         createdAt: new Date().toISOString(),
         lastPlayed: new Date().toISOString(),
       });

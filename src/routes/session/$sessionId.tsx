@@ -111,6 +111,7 @@ function RouteComponent() {
           <SessionUserList
             sessionOwner={sessionData.data.owner}
             users={sessionUsers.data}
+            inviteCode={sessionData.data.inviteCode}
             orientation="horizontal"
             className="border-t border-neutral-300 mt-2 pt-2"
           />
