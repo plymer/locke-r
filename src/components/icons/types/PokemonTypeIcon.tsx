@@ -1,4 +1,5 @@
 import type { PokemonType } from "@/lib/types";
+import type { LucideProps } from "lucide-react";
 import RockType from "./RockType";
 import WaterType from "./WaterType";
 import FireType from "./FireType";
@@ -18,47 +19,47 @@ import PoisonType from "./PoisonType";
 import PsychicType from "./PsychicType";
 import SteelType from "./SteelType";
 
-interface Props {
+interface Props extends LucideProps {
   type: PokemonType;
 }
 
-export const PokemonTypeIcon = ({ type }: Props) => {
+export const PokemonTypeIcon = ({ type, ...props }: Props) => {
   switch (type) {
     case "rock":
-      return <RockType />;
+      return <RockType {...props} />;
     case "water":
-      return <WaterType />;
+      return <WaterType {...props} />;
     case "fire":
-      return <FireType />;
+      return <FireType {...props} />;
     case "grass":
-      return <GrassType />;
+      return <GrassType {...props} />;
     case "ghost":
-      return <GhostType />;
+      return <GhostType {...props} />;
     case "electric":
-      return <ElectricType />;
+      return <ElectricType {...props} />;
     case "bug":
-      return <BugType />;
+      return <BugType {...props} />;
     case "dark":
-      return <DarkType />;
+      return <DarkType {...props} />;
     case "dragon":
-      return <DragonType />;
+      return <DragonType {...props} />;
     case "fairy":
-      return <FairyType />;
+      return <FairyType {...props} />;
     case "fighting":
-      return <FightingType />;
+      return <FightingType {...props} />;
     case "flying":
-      return <FlyingType />;
+      return <FlyingType {...props} />;
     case "ground":
-      return <GroundType />;
+      return <GroundType {...props} />;
     case "ice":
-      return <IceType />;
+      return <IceType {...props} />;
     case "normal":
-      return <NormalType />;
+      return <NormalType {...props} />;
     case "poison":
-      return <PoisonType />;
+      return <PoisonType {...props} />;
     case "psychic":
-      return <PsychicType />;
+      return <PsychicType {...props} />;
     case "steel":
-      return <SteelType />;
+      return <SteelType {...props} />;
   }
 };

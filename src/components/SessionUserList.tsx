@@ -1,15 +1,17 @@
 import type { UserProfileData } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
-interface Props {
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
   sessionOwner: string;
   users: Pick<UserProfileData, "id" | "displayName">[] | undefined | null;
+  orientation?: "horizontal" | "vertical";
 }
 
-export const SessionUserList = ({ sessionOwner, users }: Props) => {
+export const SessionUserList = ({ sessionOwner, users, orientation = "vertical", ...props }: Props) => {
   return (
-    <div className="flex gap-2">
-      <h1 className="col-span-2">Players:</h1>
-      <div>
+    <div {...props} className={cn("flex gap-2", props.className)}>
+      <h1>Players:</h1>
+      <div className={orientation === "horizontal" ? "flex gap-2" : ""}>
         {users?.map((user) => {
           const isOwner = sessionOwner === user.id;
           return (

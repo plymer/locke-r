@@ -12,6 +12,8 @@ import { sessionDataFetchers } from "./lib/sessionData";
 import { useSupabase } from "./hooks/useSupabase";
 import Loading from "./components/icons/Loading";
 import { partyDataFetchers } from "./lib/partyData";
+import { userDataFetchers } from "./lib/userData";
+import { pokemonDataFetchers } from "./lib/pokemonData";
 
 // Create a new router instance
 const router = createRouter({
@@ -21,6 +23,8 @@ const router = createRouter({
     sessionIds: undefined,
     sessionFns: undefined!,
     partyFns: undefined!,
+    userFns: undefined!,
+    pkmnFns: undefined!,
   },
 });
 
@@ -40,6 +44,8 @@ function App() {
   // Create plain fetching functions for use in loaders
   const sessionFns = sessionDataFetchers(getSupabase);
   const partyFns = partyDataFetchers(getSupabase);
+  const userFns = userDataFetchers(getSupabase);
+  const pkmnFns = pokemonDataFetchers(getSupabase);
 
   if (auth.isLoading) {
     return (
@@ -58,6 +64,8 @@ function App() {
         sessionIds,
         sessionFns,
         partyFns,
+        userFns,
+        pkmnFns,
       }}
     />
   );

@@ -11,6 +11,8 @@ import { usePokemonData } from "@/hooks/poke-api/usePokemonApiData";
 import { PokemonTypeBanner } from "@/components/ui/PokemonTypeBanner";
 import Pokeball from "@/components/icons/Pokeball";
 import { usePartyData } from "@/hooks/usePartyData";
+// import { useMoveData } from "@/hooks/poke-api/useMoveApiData";
+import type { PokemonInsertData } from "@/lib/types";
 
 type CreatePartySearch = {
   sessionId: string;
@@ -26,26 +28,32 @@ export const Route = createFileRoute("/party/create")({
 });
 
 type PartyFormData = {
-  name: string;
-  starter: number;
+  partyName: string | undefined;
+  starterNumber: number | undefined;
 };
 
 function RouteComponent() {
   const { sessionId } = Route.useSearch();
   const { getSingleSession } = useSessionData();
   const { data, error, fetchStatus } = getSingleSession(sessionId);
-  const { data: pokemonList } = usePokemonData().listAll();
+
+  const { getByNumber } = usePokemonData();
+  // const { getByName } = useMoveData();
 
   const { createNewParty } = usePartyData();
 
   const { register, handleSubmit, reset, setValue, watch } = useForm<PartyFormData>({
     defaultValues: {
-      name: "",
-      starter: 0,
+      partyName: undefined,
+      starterNumber: undefined,
     },
   });
 
-  const selectedStarter = watch("starter");
+  const selectedStarter = watch("starterNumber");
+
+  const { data: selectedPokemonData } = getByNumber(selectedStarter);
+
+  console.log(selectedPokemonData);
 
   if (fetchStatus === "fetching") {
     return (
@@ -60,17 +68,66 @@ function RouteComponent() {
     return <div>Error loading session data.</div>;
   }
 
-  const { gameGen, pkmnGameName, instanceName } = data.data;
+  const { gameGen, pkmnGameName, instanceName, owner } = data.data;
 
   const starters = STARTERS_BY_GAME[pkmnGameName as keyof typeof STARTERS_BY_GAME] || STARTERS_BY_GEN[gameGen];
 
-  // const onSubmit = (formData: PartyFormData) => {
-  //   createNewParty.mutate({
-  //     sessionId,
-  //     partyName: formData.name,
-  //     starterPokemonNumber: formData.starter,
-  //   });
-  // };
+  /*
+  
+  ability: string | null;
+  gender: string | null;
+  heldItem: string | null;
+  level: number;
+  moveFour: string | null;
+  moveOne: string;
+  moveThree: string | null;
+  moveTwo: string | null;
+  nature: string;
+  nickname: string;
+  speciesId: number;
+  status: string;
+
+  */
+
+  const selectedStarterData = starters.find((starter) => starter.number === selectedStarter);
+
+  const starterPokemonObject: PokemonInsertData = {
+    speciesId: selectedStarterData ? selectedStarterData.number : 0,
+    nickname: selectedStarterData ? selectedStarterData.name : "Starter",
+    level: 5,
+    ability: null,
+    gender: null,
+    heldItem: null,
+    moveOne: selectedStarterData ? selectedStarterData.startingMoveset[0] : "",
+    moveTwo:
+      selectedStarterData && selectedStarterData.startingMoveset.length > 1
+        ? selectedStarterData.startingMoveset[1]
+        : null,
+    moveThree:
+      selectedStarterData && selectedStarterData.startingMoveset.length > 2
+        ? selectedStarterData.startingMoveset[2]
+        : null,
+    moveFour:
+      selectedStarterData && selectedStarterData.startingMoveset.length > 3
+        ? selectedStarterData.startingMoveset[3]
+        : null,
+    nature: null,
+    status: "ok",
+    locationCaught: "Starter Selection",
+  };
+
+  const onSubmit = (formData: PartyFormData) => {
+    if (!formData.partyName) return;
+
+    console.log("Creating party with starter:", starterPokemonObject);
+
+    createNewParty.mutate({
+      userId: owner,
+      sessionId,
+      partyName: formData.partyName,
+      starterPokemon: starterPokemonObject,
+    });
+  };
 
   return (
     <div className="flex flex-col gap-2">
@@ -78,10 +135,13 @@ function RouteComponent() {
       <div className="flex bg-secondary text-black rounded-lg p-4 place-items-center gap-2">
         <GameGenCard generation={gameGen} name={pkmnGameName} />
 
-        <form className="bg-secondary text-black p-2 rounded-lg space-y-4 max-w-md grow">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="bg-secondary text-black p-2 rounded-lg space-y-4 max-w-md grow"
+        >
           <div className="space-y-2">
             <Label htmlFor="name">Party Name</Label>
-            <Input id="name" type="text" {...register("name")} />
+            <Input id="name" type="text" {...register("partyName")} />
           </div>
 
           <div className="space-y-2">
@@ -90,7 +150,7 @@ function RouteComponent() {
               <button
                 key={starter.number}
                 type="button"
-                onClick={() => setValue("starter", starter.number)}
+                onClick={() => setValue("starterNumber", starter.number)}
                 className={`flex gap-2 place-items-center w-full rounded-lg p-2 transition-colors ${
                   selectedStarter === starter.number ? "bg-primary/20 ring-2 ring-primary" : "hover:bg-primary/10"
                 }`}
@@ -118,12 +178,7 @@ function RouteComponent() {
           </div>
 
           <div className="flex gap-2">
-            <Button
-              type="button"
-              className="group"
-              disabled={!watch("name") || selectedStarter === 0}
-              onClick={() => void 0}
-            >
+            <Button type="submit" className="group" disabled={!watch("partyName") || !watch("starterNumber")}>
               <Pokeball className="group-hover:animate-spin" />
               Start!
             </Button>

@@ -2,16 +2,31 @@ import { useQuery } from "@tanstack/react-query";
 import { Pokedex } from "pokeapi-js-wrapper";
 
 export const usePokemonData = () => {
-  const getByName = (name: string) => {
-    const searchName = name.toLowerCase();
+  const getByName = (name: string | undefined) => {
+    const searchName = name?.toLowerCase();
 
     const queryFn = async () => {
       const pokedex = new Pokedex();
+      if (!searchName) return null;
       return await pokedex.getPokemonByName(searchName);
     };
 
     return useQuery({
-      queryKey: ["searchByName", searchName],
+      queryKey: ["searchPokemonByName", searchName],
+      queryFn: queryFn,
+      retry: false,
+    });
+  };
+
+  const getByNumber = (number: number | undefined) => {
+    const queryFn = async () => {
+      const pokedex = new Pokedex();
+      if (!number) return null;
+      return await pokedex.getPokemonByName(number);
+    };
+
+    return useQuery({
+      queryKey: ["searchPokemonByNumber", number],
       queryFn: queryFn,
       retry: false,
     });
@@ -24,11 +39,11 @@ export const usePokemonData = () => {
     };
 
     return useQuery({
-      queryKey: ["fullList"],
+      queryKey: ["fullPokemonList"],
       queryFn: queryFn,
       retry: false,
     });
   };
 
-  return { getByName, listAll };
+  return { getByName, getByNumber, listAll };
 };

@@ -1,7 +1,6 @@
 import { useSupabase } from "./useSupabase";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { PokemonInsertData } from "@/lib/types";
-import { usePokemonData } from "./usePokemonData";
 
 export const usePartyData = () => {
   const getSupabase = useSupabase();
@@ -61,18 +60,27 @@ export const usePartyData = () => {
     }) => {
       const { userId, sessionId, partyName, starterPokemon } = variables;
 
-      const { createPokemon } = usePokemonData();
       const supabase = await getSupabase();
 
       if (!userId) throw new Error("User ID is required to create user session");
 
       // create our starter pokemon first
-      createPokemon.mutate(starterPokemon);
-      const monsterId = createPokemon.data;
+      const { data: monsterData, error: monsterError } = await supabase
+        .from("monsters")
+        .insert({
+          ...starterPokemon,
+          owner: userId,
+          dateCaught: new Date().toISOString(),
+          gameInstance: sessionId,
+        })
+        .select()
+        .single();
 
-      if (!monsterId) {
-        throw new Error("Failed to retrieve created monster ID");
+      if (monsterError || !monsterData) {
+        throw new Error(monsterError?.message || "Failed to create starter Pokemon");
       }
+
+      const monsterId = monsterData.id;
 
       const { data: partyData, error: partyError } = await supabase
         .from("parties")
@@ -162,7 +170,11 @@ export const usePartyData = () => {
       return;
     },
     onSuccess: async () => {
+      console.log("Party created successfully");
       await queryClient.invalidateQueries({ queryKey: ["userParty"] });
+    },
+    onError: (error) => {
+      console.error("Error creating party:", error);
     },
   });
 

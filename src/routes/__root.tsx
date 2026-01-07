@@ -4,7 +4,9 @@ import { SignIn } from "@/components/SignIn";
 import { SignUp } from "@/components/SignUp";
 import { useDbByUser } from "@/hooks/useDbByUser";
 import type { PartyDataFetchers } from "@/lib/partyData";
+import type { PokemonDataFetchers } from "@/lib/pokemonData";
 import type { SessionDataFetchers } from "@/lib/sessionData";
+import type { UserDataFetchers } from "@/lib/userData";
 import { useUserActions } from "@/state-store/user";
 import { Outlet, createRootRouteWithContext, Link } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
@@ -15,6 +17,8 @@ interface RouterContext {
   sessionIds?: string[];
   sessionFns: SessionDataFetchers;
   partyFns: PartyDataFetchers;
+  userFns: UserDataFetchers;
+  pkmnFns: PokemonDataFetchers;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({

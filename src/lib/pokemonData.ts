@@ -1,78 +1,25 @@
-export const POKEMON_TYPES = [
-  "normal",
-  "fire",
-  "water",
-  "electric",
-  "grass",
-  "ice",
-  "fighting",
-  "poison",
-  "ground",
-  "flying",
-  "psychic",
-  "bug",
-  "rock",
-  "ghost",
-  "dragon",
-  "dark",
-  "steel",
-  "fairy",
-] as const;
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "./supabase";
 
-export const POKEMON_TYPE_COLORS: Record<(typeof POKEMON_TYPES)[number], string> = {
-  normal: "#A8A77A",
-  fire: "#EE8130",
-  water: "#6390F0",
-  electric: "#F7D02C",
-  grass: "#7AC74C",
-  ice: "#96D9D6",
-  fighting: "#C22E28",
-  poison: "#A33EA1",
-  ground: "#E2BF65",
-  flying: "#A98FF3",
-  psychic: "#F95587",
-  bug: "#A6B91A",
-  rock: "#B6A136",
-  ghost: "#735797",
-  dragon: "#6F35FC",
-  dark: "#705746",
-  steel: "#B7B7CE",
-  fairy: "#D685AD",
+/**
+ * Plain data fetching functions (not hooks) that can be used in router loaders.
+ * These should be passed through router context.
+ */
+
+export const pokemonDataFetchers = (getSupabase: () => Promise<SupabaseClient<Database>>) => {
+  return {
+    getSinglePokemon: async (monsterId: number) => {
+      const supabase = await getSupabase();
+      const response = await supabase.from("monsters").select().eq("id", monsterId).single();
+      return response;
+    },
+
+    getPokemonList: async (monsterIds: number[]) => {
+      const supabase = await getSupabase();
+      const response = await supabase.from("monsters").select().in("id", monsterIds);
+      return response;
+    },
+  };
 };
 
-export const POKEMON_GAMES = [
-  "Red",
-  "Blue",
-  "Yellow",
-  "Gold",
-  "Silver",
-  "Crystal",
-  "Ruby",
-  "Sapphire",
-  "Emerald",
-  "FireRed",
-  "LeafGreen",
-  "Diamond",
-  "Pearl",
-  "Platinum",
-  "HeartGold",
-  "SoulSilver",
-  "Black",
-  "White",
-  "Black 2",
-  "White 2",
-  "X",
-  "Y",
-  "Omega Ruby",
-  "Alpha Sapphire",
-  "Sun",
-  "Moon",
-  "Ultra Sun",
-  "Ultra Moon",
-  "Sword",
-  "Shield",
-  "Brilliant Diamond",
-  "Shining Pearl",
-  "Scarlet",
-  "Violet",
-] as const;
+export type PokemonDataFetchers = ReturnType<typeof pokemonDataFetchers>;
