@@ -12,7 +12,7 @@ import { PokemonTypeBanner } from "@/components/ui/PokemonTypeBanner";
 import Pokeball from "@/components/icons/Pokeball";
 import { usePartyData } from "@/hooks/usePartyData";
 // import { useMoveData } from "@/hooks/poke-api/useMoveApiData";
-import type { PokemonInsertData } from "@/lib/types";
+import type { PokemonGame, PokemonInsertData } from "@/lib/types";
 
 type CreatePartySearch = {
   sessionId: string;
@@ -51,9 +51,7 @@ function RouteComponent() {
 
   const selectedStarter = watch("starterNumber");
 
-  const { data: selectedPokemonData } = getByNumber(selectedStarter);
-
-  console.log(selectedPokemonData);
+  const { data: _selectedPokemonData } = getByNumber(selectedStarter); // TODO:: we will display more information about the selected pokemon to the right side of the screen, but leaving this for now so we can work through the rest of the flow
 
   if (fetchStatus === "fetching") {
     return (
@@ -71,23 +69,6 @@ function RouteComponent() {
   const { gameGen, pkmnGameName, instanceName, owner } = data.data;
 
   const starters = STARTERS_BY_GAME[pkmnGameName as keyof typeof STARTERS_BY_GAME] || STARTERS_BY_GEN[gameGen];
-
-  /*
-  
-  ability: string | null;
-  gender: string | null;
-  heldItem: string | null;
-  level: number;
-  moveFour: string | null;
-  moveOne: string;
-  moveThree: string | null;
-  moveTwo: string | null;
-  nature: string;
-  nickname: string;
-  speciesId: number;
-  status: string;
-
-  */
 
   const selectedStarterData = starters.find((starter) => starter.number === selectedStarter);
 
@@ -119,8 +100,6 @@ function RouteComponent() {
   const onSubmit = (formData: PartyFormData) => {
     if (!formData.partyName) return;
 
-    console.log("Creating party with starter:", starterPokemonObject);
-
     createNewParty.mutate({
       userId: owner,
       sessionId,
@@ -133,7 +112,7 @@ function RouteComponent() {
     <div className="flex flex-col gap-2">
       <h1 className="text-3xl font-bold">Create a Party for '{instanceName}'</h1>
       <div className="flex bg-secondary text-black rounded-lg p-4 place-items-center gap-2">
-        <GameGenCard generation={gameGen} name={pkmnGameName} />
+        <GameGenCard generation={gameGen} name={pkmnGameName as PokemonGame} />
 
         <form
           onSubmit={handleSubmit(onSubmit)}

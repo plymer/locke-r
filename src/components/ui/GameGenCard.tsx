@@ -1,15 +1,15 @@
+import { useGameInfoByName } from "@/hooks/poke-api/useGameApiData";
+import type { PokemonGame } from "@/lib/types";
 import { cn, makeRomanNumeral } from "@/lib/utils";
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
-  name: string;
+  name: PokemonGame;
   generation: number;
   orientation?: "horizontal" | "vertical";
 }
 
 export const GameGenCard = ({ name, generation, orientation = "vertical", ...props }: Props) => {
-  // the games like HeartGold and FireRed need to be formatted like heart-gold and fire-red for the image paths
-  // so we need to check for capital letters and insert hyphens accordingly
-  const formattedName = name.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+  const { data: apiGameName } = useGameInfoByName(name);
 
   return (
     <div
@@ -21,10 +21,10 @@ export const GameGenCard = ({ name, generation, orientation = "vertical", ...pro
         } items-center`
       )}
     >
-      <img src={`/games/${formattedName}.png`} alt={name} className="size-32" />
+      <img src={`/games/${name}.png`} alt={apiGameName} className="size-32" />
       {orientation === "vertical" && (
         <div className="p-2 bg-neutral-900 text-white rounded-b-lg border-t border-neutral-400 w-full text-center">
-          <p className="font-bold">{name}</p>
+          <p className="font-bold">{apiGameName}</p>
           <p className="text-sm italic">(Gen {makeRomanNumeral(generation)})</p>
           {props.children}
         </div>
@@ -32,7 +32,7 @@ export const GameGenCard = ({ name, generation, orientation = "vertical", ...pro
       {orientation === "horizontal" && (
         <div className="p-2 bg-neutral-900 flex place-items-center gap-4 w-full text-white h-full ">
           <div className="text-center">
-            <p className="font-bold">{name}</p>
+            <p className="font-bold">{apiGameName}</p>
             <p className="text-sm italic">(Gen {makeRomanNumeral(generation)})</p>
           </div>
           <div>{props.children}</div>

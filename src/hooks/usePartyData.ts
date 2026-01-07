@@ -1,8 +1,10 @@
 import { useSupabase } from "./useSupabase";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { PokemonInsertData } from "@/lib/types";
+import { useRouter } from "@tanstack/react-router";
 
 export const usePartyData = () => {
+  const router = useRouter();
   const getSupabase = useSupabase();
   const queryClient = useQueryClient();
 
@@ -169,9 +171,9 @@ export const usePartyData = () => {
 
       return;
     },
-    onSuccess: async () => {
-      console.log("Party created successfully");
+    onSuccess: async (_data, { sessionId }) => {
       await queryClient.invalidateQueries({ queryKey: ["userParty"] });
+      router.navigate({ to: "/session/$sessionId", params: { sessionId } });
     },
     onError: (error) => {
       console.error("Error creating party:", error);

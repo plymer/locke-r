@@ -3,6 +3,7 @@ import { SessionUserList } from "@/components/SessionUserList";
 import { Button } from "@/components/ui/Button";
 import { GameGenCard } from "@/components/ui/GameGenCard";
 import { PokemonSummaryCard } from "@/components/ui/PokemonSummaryCard";
+import type { PokemonGame } from "@/lib/types";
 import { useUserId } from "@/state-store/user";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Edit } from "lucide-react";
@@ -87,7 +88,7 @@ function RouteComponent() {
       <div className="flex gap-2 bg-secondary rounded-lg overflow-clip">
         <GameGenCard
           generation={sessionData.data.gameGen}
-          name={sessionData.data.pkmnGameName}
+          name={sessionData.data.pkmnGameName as PokemonGame}
           orientation="horizontal"
           className="bg-secondary w-full ps-2"
         >
@@ -153,7 +154,7 @@ function RouteComponent() {
                 </div>
                 <div className="flex justify-center gap-2">
                   {pokemon?.map((p) => (
-                    <PokemonSummaryCard data={p} />
+                    <PokemonSummaryCard key={p.id} data={p} />
                   ))}
                 </div>
               </li>

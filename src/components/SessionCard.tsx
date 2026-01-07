@@ -1,5 +1,5 @@
 import { useDisplayNames } from "@/hooks/useDisplayNames";
-import type { SessionData } from "@/lib/types";
+import type { PokemonGame, SessionData } from "@/lib/types";
 import { useRouter } from "@tanstack/react-router";
 import { useUserId } from "@/state-store/user";
 import { GameGenCard } from "./ui/GameGenCard";
@@ -28,7 +28,7 @@ export const SessionCard = ({ sessionData }: Props) => {
   return (
     <div className="bg-secondary text-black rounded-lg border-neutral-400 border flex flex-col">
       <div className="flex gap-2 p-2">
-        <GameGenCard name={pkmnGameName} generation={gameGen} />
+        <GameGenCard name={pkmnGameName as PokemonGame} generation={gameGen} />
         <div className="grow flex flex-col justify-between gap-2 px-2">
           <div className="border-b border-neutral-400 pb-2 ">
             <h1 className="text-lg font-bold text-center">{instanceName}</h1>
