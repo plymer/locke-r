@@ -14,40 +14,23 @@ export const Route = createFileRoute("/session/$sessionId")({
     // this route will only be accessible if the user is already authenticated,
     // so we don't need to check auth here
 
-    // we do need to make sure that they have access to the requested sessionId
-    // if they do not have permission, they will be redirected to the root
-
     const { sessionId } = params;
-
     const { fetchSessionParties } = context.sessionFns;
 
-    if (context.sessionIds === undefined) {
-      throw redirect({ to: "/" });
-    }
+    // if there are no sessionIds in context, something is wrong - redirect to root
+    if (context.sessionIds === undefined) throw redirect({ to: "/" });
 
     const hasAccess = !!context.sessionIds?.includes(sessionId);
 
-    if (!hasAccess) {
-      throw redirect({ to: "/" });
-    }
+    // if the user has somehow navigated to a session they do not have access to, redirect them to root
+    if (!hasAccess) throw redirect({ to: "/" });
 
     // set up our redirect if the user does not have a party in this session
-
     const partiesResponse = await fetchSessionParties(sessionId);
-
-    console.log("Parties response:", partiesResponse);
-    console.log("User ID:", context.userId);
-
     const userParty = partiesResponse.data?.find((party) => party.owner === context.userId);
 
-    console.log("User party in session:", userParty);
-
-    if (userParty) {
-      // user has a party in this session, allow access
-      return;
-    } else {
-      throw redirect({ to: "/party/create", search: { sessionId } });
-    }
+    // if the user has no party in this session, redirect them to create one
+    if (!userParty) throw redirect({ to: "/party/create", search: { sessionId } });
   },
   loader: async ({ params, context }) => {
     // get our sessionId from the path params
@@ -88,7 +71,6 @@ export const Route = createFileRoute("/session/$sessionId")({
 });
 
 function RouteComponent() {
-  // const router = useRouter();
   const loaderData = Route.useLoaderData();
 
   const userId = useUserId();
@@ -96,13 +78,6 @@ function RouteComponent() {
   const { sessionData, sessionParties, sessionUsers, sessionPokemon } = loaderData;
 
   if (!sessionData?.data) return <div>Session not found.</div>;
-
-  // if (!sessionParties?.data || sessionParties.data.length === 0) {
-  //   console.log("No parties found, redirecting to create party");
-
-  //   router.navigate({ to: `/party/create?sessionId=${sessionData.data.id}` });
-  //   return;
-  // }
 
   return (
     <div className="flex flex-col gap-2 rounded-b-lg">
