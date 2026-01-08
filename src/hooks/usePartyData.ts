@@ -101,75 +101,53 @@ export const usePartyData = () => {
         throw new Error(partyError?.message || "Failed to create party");
       }
 
-      // now check to see if there are other parties in this session already, so we can make links between the starters
-      const { data: existingPartiesData, error: existingPartiesError } = await supabase
-        .from("parties")
-        .select()
-        .eq("gameInstance", sessionId)
-        .neq("id", partyData.id); // exclude the party we just created
-
-      if (existingPartiesError) {
-        throw new Error(existingPartiesError.message || "Failed to fetch existing parties for linking");
-      }
-
       // get any links that already exist in our session
       const { data: existingLinksData, error: existingLinksError } = await supabase
         .from("monsterLinks")
         .select()
-        .eq("gameInstance", sessionId);
+        .eq("gameInstance", sessionId)
+        .maybeSingle();
 
       if (existingLinksError) {
         throw new Error(existingLinksError.message || "Failed to fetch existing monster links");
       }
 
-      let alreadyLinked = false;
-
-      if (!existingPartiesData || existingPartiesData.length === 0) return;
-
       // for each existing party, create a link between the new party's starter and the existing party's starter
 
-      for (const existingParty of existingPartiesData) {
-        if (existingLinksData && existingLinksData.length > 0) {
-          for (const link of existingLinksData) {
-            if (link.slotOne === monsterId || link.slotTwo === monsterId || link.slotThree === monsterId) {
-              alreadyLinked = true;
-            }
-          }
-        }
+      // if we have no existing links, we can just create a new entry for the party (we're the first ones in, yay!)
 
-        if (alreadyLinked) continue; // skip to the next existing party
-
-        // get the link entry that has the existing party's starter in it
-        const matchToPopulate = existingLinksData.find(
-          (link) =>
-            link.slotOne === existingParty.slotOne ||
-            link.slotTwo === existingParty.slotOne ||
-            link.slotThree === existingParty.slotOne
-        );
-
-        if (!matchToPopulate) {
-          throw new Error("No matching monster link found for existing party starter");
-        }
-
-        // default to the second slot, but check if it's already filled
-        let columnToUse: "slotTwo" | "slotThree" = "slotTwo";
-
-        if (matchToPopulate?.slotTwo && !matchToPopulate?.slotThree) {
-          columnToUse = "slotThree";
-        }
-
-        // create the link from our new monster to the existing party's starter
-        const { error: linkError } = await supabase
-          .from("monsterLinks")
-          .update({ [columnToUse]: monsterId })
-          .eq("id", matchToPopulate.id);
+      if (!existingLinksData) {
+        const { error: linkError } = await supabase.from("monsterLinks").insert({
+          gameInstance: sessionId,
+          slotOne: monsterId,
+          location: starterPokemon.locationCaught,
+        });
 
         if (linkError) {
           throw new Error(linkError.message || "Failed to create monster link");
         }
+
+        return;
       }
 
-      return;
+      // otherwise, we need to add our start to the link for the sessionId
+
+      // default to the second slot, but check if it's already filled
+      let columnToUse: "slotTwo" | "slotThree" = "slotTwo";
+
+      if (existingLinksData?.slotTwo && !existingLinksData?.slotThree) {
+        columnToUse = "slotThree";
+      }
+
+      // create the link from our new monster to the existing party's starter
+      const { error: linkError } = await supabase
+        .from("monsterLinks")
+        .update({ [columnToUse]: monsterId })
+        .eq("location", existingLinksData.location);
+
+      if (linkError) {
+        throw new Error(linkError.message || "Failed to create monster link");
+      }
     },
     onSuccess: async (_data, { sessionId }) => {
       // Invalidate first

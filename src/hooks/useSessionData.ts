@@ -76,6 +76,21 @@ export const useSessionData = () => {
     },
   });
 
+  const startSession = useMutation({
+    mutationFn: async (sessionId: string) => {
+      const supabase = await getSupabase();
+      const { error } = await supabase
+        .from("gameInstances")
+        .update({ lastPlayed: new Date().toISOString(), status: "active" })
+        .eq("id", sessionId);
+
+      return error;
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["userSessions", userId] });
+    },
+  });
+
   const createUserSession = useMutation({
     mutationFn: async (variables: {
       instanceName: string;
@@ -105,5 +120,5 @@ export const useSessionData = () => {
     },
   });
 
-  return { getSingleSession, getSessionParties, getUserSessions, joinSession, createUserSession };
+  return { startSession, getSingleSession, getSessionParties, getUserSessions, joinSession, createUserSession };
 };

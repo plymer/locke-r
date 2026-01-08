@@ -95,7 +95,7 @@ function RouteComponent() {
         : null,
     nature: null,
     status: "ok",
-    locationCaught: "Starter Selection",
+    locationCaught: "starter",
   };
 
   const onSubmit = (formData: PartyFormData) => {

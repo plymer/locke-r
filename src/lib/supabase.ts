@@ -45,6 +45,7 @@ export type Database = {
           pkmnGameName: string;
           playerThree: string | null;
           playerTwo: string | null;
+          status: string;
         };
         Insert: {
           createdAt?: string;
@@ -57,6 +58,7 @@ export type Database = {
           pkmnGameName: string;
           playerThree?: string | null;
           playerTwo?: string | null;
+          status?: string;
         };
         Update: {
           createdAt?: string;
@@ -69,6 +71,7 @@ export type Database = {
           pkmnGameName?: string;
           playerThree?: string | null;
           playerTwo?: string | null;
+          status?: string;
         };
         Relationships: [
           {
@@ -98,23 +101,26 @@ export type Database = {
         Row: {
           gameInstance: string | null;
           id: number;
+          location: string;
           slotOne: number;
           slotThree: number | null;
-          slotTwo: number;
+          slotTwo: number | null;
         };
         Insert: {
           gameInstance?: string | null;
           id?: number;
+          location: string;
           slotOne: number;
           slotThree?: number | null;
-          slotTwo: number;
+          slotTwo?: number | null;
         };
         Update: {
           gameInstance?: string | null;
           id?: number;
+          location?: string;
           slotOne?: number;
           slotThree?: number | null;
-          slotTwo?: number;
+          slotTwo?: number | null;
         };
         Relationships: [
           {
@@ -127,21 +133,21 @@ export type Database = {
           {
             foreignKeyName: "monsterLinks_slotOne_fkey";
             columns: ["slotOne"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "monsters";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "monsterLinks_slotThree_fkey";
             columns: ["slotThree"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "monsters";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "monsterLinks_slotTwo_fkey";
             columns: ["slotTwo"];
-            isOneToOne: true;
+            isOneToOne: false;
             referencedRelation: "monsters";
             referencedColumns: ["id"];
           }

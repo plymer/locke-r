@@ -13,7 +13,8 @@ interface Props {
 
 export const SessionCard = ({ sessionData }: Props) => {
   const userId = useUserId();
-  const { createdAt, gameGen, instanceName, lastPlayed, pkmnGameName, owner, playerTwo, playerThree } = sessionData;
+  const { createdAt, gameGen, instanceName, lastPlayed, pkmnGameName, owner, playerTwo, playerThree, status } =
+    sessionData;
 
   const router = useRouter();
 
@@ -31,10 +32,13 @@ export const SessionCard = ({ sessionData }: Props) => {
         <GameGenCard name={pkmnGameName as PokemonGame} generation={gameGen} />
         <div className="grow flex flex-col justify-between gap-2 px-2">
           <div className="border-b border-neutral-400 pb-2 ">
-            <h1 className="text-lg font-bold text-center">{instanceName}</h1>
-            <h3 className="text-center text-sm text-neutral-500">
-              (Started {new Date(createdAt).toLocaleDateString("en-CA", { dateStyle: "short" })})
-            </h3>
+            <h1 className="text-lg font-bold text-center flex gap-2 justify-center items-center">{instanceName}</h1>
+            {status === "waiting" && (
+              <div className="text-center text-sm text-neutral-500">
+                <p>{status === "waiting" ? "Waiting for players..." : status === "active" ? "Active" : "Complete"}</p>
+                <p>(Started {new Date(createdAt).toLocaleDateString("en-CA", { dateStyle: "short" })})</p>
+              </div>
+            )}
           </div>
           <p className="text-sm">
             Last played:{" "}
