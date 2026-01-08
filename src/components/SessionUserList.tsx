@@ -25,7 +25,7 @@ export const SessionUserList = ({ sessionOwner, users, orientation = "vertical",
   };
 
   return (
-    <div {...props} className={cn("flex gap-2 place-items-center", props.className)}>
+    <div {...props} className={cn("flex gap-2 place-items-center max-md:flex-col ", props.className)}>
       <h1>Players ({users?.length}/3):</h1>
       <div className={orientation === "horizontal" ? "flex gap-2" : ""}>
         {users?.map((user) => {
@@ -46,8 +46,12 @@ export const SessionUserList = ({ sessionOwner, users, orientation = "vertical",
             </Button>
           </PopoverTrigger>
           <PopoverContent className="bg-secondary-foreground w-fit">
-            <div className="flex gap-2">
-              <Input disabled className="bg-white text-black text-center disabled:opacity-100" value={inviteCode} />
+            <div className="flex gap-2 max-md:flex-col place-items-center">
+              <Input
+                disabled
+                className="bg-white text-black text-center disabled:opacity-100 text-sm"
+                value={inviteCode}
+              />
               <Button onClick={handleCopyInvite}>
                 <Copy />
                 Copy Code

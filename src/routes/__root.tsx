@@ -66,13 +66,13 @@ function RootComponent() {
               </div>
             )}
           </nav>
-          <div className="bg-accent px-4 pt-2 pb-4 rounded-b-lg">
+          <div className="bg-accent p-4 pb-4 rounded-b-lg">
             <Outlet />
           </div>
         </>
       )}
       {!authed && (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-4 place-items-center text-center rounded-lg bg-neutral-950 p-8">
+        <div className="md:absolute md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 flex max-md:flex-col gap-4 place-items-center max-md:justify-center text-center rounded-lg max-md:h-[calc(100dvh-2rem)] bg-neutral-950 p-8">
           <img src="/ultra-ball.png" className="size-32" />
           <div className="flex gap-2 flex-col">
             <h1 className="text-6xl">

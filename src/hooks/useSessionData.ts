@@ -50,6 +50,32 @@ export const useSessionData = () => {
     },
   });
 
+  const joinSession = useMutation({
+    mutationFn: async (variables: { inviteCode: string; userId: string }) => {
+      const { inviteCode, userId } = variables;
+
+      const supabase = await getSupabase();
+
+      const tryJoin = async (slot: "playerTwo" | "playerThree") =>
+        supabase
+          .from("gameInstances")
+          .update({ [slot]: userId })
+          .eq("inviteCode", inviteCode)
+          .is(slot, null)
+          .select()
+          .maybeSingle();
+
+      const result = (await tryJoin("playerTwo")).data ?? (await tryJoin("playerThree")).data;
+
+      if (!result) {
+        throw new Error("Session is full or invite code invalid");
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["userSessions", userId] });
+    },
+  });
+
   const createUserSession = useMutation({
     mutationFn: async (variables: {
       instanceName: string;
@@ -79,5 +105,5 @@ export const useSessionData = () => {
     },
   });
 
-  return { getSingleSession, getSessionParties, getUserSessions, createUserSession };
+  return { getSingleSession, getSessionParties, getUserSessions, joinSession, createUserSession };
 };

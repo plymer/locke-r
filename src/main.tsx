@@ -52,7 +52,7 @@ function App() {
 
   if (auth.isLoading) {
     return (
-      <div className="flex place-items-center gap-2 justify-center min-h-screen">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-2 place-items-center">
         <Loading className="animate-spin" />
         Loading...
       </div>

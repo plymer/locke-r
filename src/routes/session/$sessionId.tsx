@@ -85,15 +85,15 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex flex-col gap-2 rounded-b-lg">
+    <div className="flex flex-col gap-4 rounded-b-lg">
       <div className="flex gap-2 bg-secondary rounded-lg overflow-clip">
         <GameGenCard
           generation={sessionData.data.gameGen}
           name={sessionData.data.pkmnGameName as PokemonGame}
           orientation="horizontal"
-          className="bg-secondary w-full ps-2"
+          className="bg-secondary w-full md:ps-2 max-md:text-center"
         >
-          <h1 className="text-3xl font-bold">{sessionData.data.instanceName}</h1>
+          <h1 className="md:text-3xl max-md:text-xl font-bold">{sessionData.data.instanceName}</h1>
           <p className="text-sm text-neutral-300">
             Created at:{" "}
             {new Date(sessionData.data.createdAt).toLocaleString("en-CA", {
@@ -118,7 +118,7 @@ function RouteComponent() {
         </GameGenCard>
       </div>
       <div className="flex flex-col gap-2 bg-secondary text-black rounded-lg p-4">
-        <div className="flex gap-2 justify-center place-items-center text-3xl font-bold">
+        <div className="flex gap-2 justify-center place-items-center md:text-3xl max-md:text-xl font-bold">
           <Pokeball className="opacity-10" />
           <Pokeball className="opacity-30" />
           <Pokeball className="opacity-60" />
@@ -141,10 +141,16 @@ function RouteComponent() {
 
             return (
               <li key={party.id} className="flex flex-col gap-4 border-2 border-black rounded-lg p-4">
-                <div className="flex place-items-center justify-around bg-neutral-800 text-white rounded-full px-4 py-2 font-bold">
-                  <p>Player: {user?.displayName}</p>
-                  <p>Party Name: {partyName}</p>
+                <div className="flex max-md:flex-col md:place-items-center justify-around bg-neutral-800 text-white md:rounded-full max-md:rounded-lg max-md:gap-1 max-md:text-center px-4 py-2 font-bold">
                   <p>
+                    <span className="max-md:hidden">Player: </span>
+                    {user?.displayName}
+                  </p>
+                  <p>
+                    <span className="max-md:hidden">Party Name: </span>
+                    <span className="italic">{partyName}</span>
+                  </p>
+                  <p className="max-md:font-normal max-md:text-xs">
                     Last Played:{" "}
                     {user?.lastLoggedIn
                       ? new Date(user.lastLoggedIn).toLocaleString("en-CA", { dateStyle: "short", timeStyle: "short" })
@@ -156,9 +162,10 @@ function RouteComponent() {
                     onClick={() => handleEditPartyClick(party.id)}
                   >
                     <Edit />
+                    <span className="md:hidden">Edit</span>
                   </Button>
                 </div>
-                <div className="flex justify-center gap-2">
+                <div className="flex max-md:flex-col justify-center gap-2">
                   {pokemon?.map((p) => (
                     <PokemonSummaryCard key={p.id} data={p} partyCount={pokemon?.length} showActions />
                   ))}
