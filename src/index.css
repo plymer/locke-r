@@ -123,3 +123,14 @@
     @apply bg-background text-foreground;
   }
 }
+/* overrides for stupid radix bug with dialog boxes */
+body[data-scroll-locked] {
+  overflow: hidden !important;
+  overscroll-behavior: contain;
+  padding-left: 1rem !important;
+  padding-top: 1rem !important;
+  padding-right: 1rem !important;
+  margin-left: auto !important;
+  margin-top: 0 !important;
+  margin-right: auto !important;
+}
