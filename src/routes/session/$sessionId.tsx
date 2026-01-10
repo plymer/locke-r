@@ -156,14 +156,16 @@ function RouteComponent() {
                       ? new Date(user.lastLoggedIn).toLocaleString("en-CA", { dateStyle: "short", timeStyle: "short" })
                       : "Unknown"}
                   </p>
-                  <Button
-                    variant="secondary"
-                    disabled={userId !== user?.id}
-                    onClick={() => handleEditPartyClick(party.id)}
-                  >
-                    <Edit />
-                    <span className="md:hidden">Edit</span>
-                  </Button>
+                  {userId === user?.id && (
+                    <Button
+                      variant="secondary"
+                      disabled={userId !== user?.id}
+                      onClick={() => handleEditPartyClick(party.id)}
+                    >
+                      <Edit />
+                      <span className="md:hidden">Edit</span>
+                    </Button>
+                  )}
                 </div>
                 <div className="flex max-md:flex-col justify-center gap-2">
                   {pokemon?.map((p) => (

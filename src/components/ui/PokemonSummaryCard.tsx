@@ -9,14 +9,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "./Popover";
 import Pokeball from "../icons/Pokeball";
 import { ArrowRightLeft, Computer } from "lucide-react";
 import { useUserId } from "@/state-store/user";
+import { cn } from "@/lib/utils";
 
-interface Props {
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
   data: PokemonData;
   partyCount: number;
   showActions?: boolean;
 }
 
-export const PokemonSummaryCard = ({ data, partyCount, showActions = false }: Props) => {
+export const PokemonSummaryCard = ({ data, partyCount, showActions = false, ...props }: Props) => {
   const { nickname, speciesId, level, gender, owner } = data;
   const userId = useUserId();
 
@@ -30,16 +31,24 @@ export const PokemonSummaryCard = ({ data, partyCount, showActions = false }: Pr
   const pokemonType2 = pokemonInfo.types[1] ? (pokemonInfo.types[1].type.name as PokemonType) : undefined;
 
   return (
-    <div className="flex flex-col bg-secondary text-white p-4 rounded-lg place-items-center justify-start drop-shadow-md border border-neutral-800 group">
+    <div
+      {...props}
+      className={cn(
+        "flex flex-col shrink-0 bg-secondary text-white p-4 rounded-lg place-items-center justify-start shadow-md border border-neutral-800 group",
+        props.className
+      )}
+    >
       <img
-        className="size-32 group-hover:scale-105 transition-all"
+        className={`size-32 ${showActions ? "group-hover:scale-105 transition-all" : ""}`}
         src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${speciesId}.png`}
         alt={nickname}
       />
       <Popover>
         <PopoverTrigger asChild>
           <button
-            className="rounded-full px-2 flex gap-2 py-1 place-items-center group-hover:scale-105 transition-all cursor-pointer"
+            className={`rounded-full px-2 flex gap-2 py-1 place-items-center ${
+              showActions ? "cursor-pointer group-hover:scale-105 transition-all" : ""
+            } `}
             style={{
               backgroundImage: `linear-gradient(60deg, ${POKEMON_TYPE_COLORS[pokemonType1]}, ${
                 pokemonType2 ? POKEMON_TYPE_COLORS[pokemonType2] : POKEMON_TYPE_COLORS[pokemonType1]
@@ -50,9 +59,9 @@ export const PokemonSummaryCard = ({ data, partyCount, showActions = false }: Pr
               <PokemonTypeIcon type={pokemonType1} />
               {pokemonType2 && <PokemonTypeIcon type={pokemonType2} />}
             </div>
-            <span className="text-lg font-bold">{nickname}</span>{" "}
-            {gender && <span>{gender === "male" ? <GenderMale className="rotate-45" /> : <GenderFemale />} </span>}
-            <span className="text-sm">Lv {level}</span>
+            <p className="text-lg font-bold">{nickname}</p>{" "}
+            {gender && <p>{gender === "male" ? <GenderMale className="rotate-45" /> : <GenderFemale />} </p>}
+            <p className="text-sm">Lv {level}</p>
           </button>
         </PopoverTrigger>
         {showActions && (

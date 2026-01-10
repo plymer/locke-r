@@ -32,6 +32,24 @@ export const usePokemonData = () => {
     });
   };
 
+  const getPartyPokemonByNumbers = (pkmnSpeciesIds: number[]) => {
+    const queryFn = async () => {
+      const pokedex = new Pokedex();
+      const pokemonData = await Promise.all(
+        pkmnSpeciesIds.map(async (id) => {
+          return await pokedex.getPokemonByName(id);
+        })
+      );
+      return pokemonData;
+    };
+
+    return useQuery({
+      queryKey: ["partyPokemonList", pkmnSpeciesIds],
+      queryFn: queryFn,
+      retry: false,
+    });
+  };
+
   const listAll = () => {
     const queryFn = async () => {
       const pokedex = new Pokedex();
@@ -45,5 +63,5 @@ export const usePokemonData = () => {
     });
   };
 
-  return { getByName, getByNumber, listAll };
+  return { getByName, getByNumber, listAll, getPartyPokemonByNumbers };
 };

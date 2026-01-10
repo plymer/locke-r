@@ -23,7 +23,7 @@ export const GameGenCard = ({ name, generation, orientation = "vertical", ...pro
     >
       <img src={`/games/${name}.png`} alt={apiGameName} className="size-32" />
       {orientation === "vertical" && (
-        <div className="p-2 bg-neutral-900 text-white rounded-b-lg border-t border-neutral-400 w-full text-center">
+        <div className="p-2 bg-neutral-900 text-white rounded-b-lg border-t border-neutral-400 w-full text-center h-full">
           <p className="font-bold">{apiGameName}</p>
           <p className="text-sm italic">(Gen {makeRomanNumeral(generation)})</p>
           {props.children}

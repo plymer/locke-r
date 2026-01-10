@@ -27,7 +27,7 @@ export const SessionCard = ({ sessionData }: Props) => {
   };
 
   return (
-    <div className="bg-secondary text-black rounded-lg border-neutral-400 border">
+    <div className="bg-secondary text-black rounded-lg border-neutral-400 border shadow-md">
       <div className="flex max-md:flex-col gap-2 p-2">
         <GameGenCard name={pkmnGameName as PokemonGame} generation={gameGen} />
         <div className="grow flex flex-col justify-between gap-2 px-2">

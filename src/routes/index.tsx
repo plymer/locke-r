@@ -99,7 +99,7 @@ function RouteComponent() {
       )}
       {!sessionsFetching && sessionsData?.data?.length === 0 && <p>No active sessions found.</p>}
       <div className="grid max-md:grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-linear-120 from-neutral-600 to-neutral-800 rounded-lg">
-        <h1 className="md:text-3xl max-md:text-lg text-center font-bold md:col-span-2 border-b pb-2">
+        <h1 className="md:text-3xl max-md:text-lg text-center font-bold md:col-span-2 border-b pb-2 shadow-md">
           Your Sessions ({sessionsData?.data?.length})
         </h1>
         {!sessionsFetching &&
