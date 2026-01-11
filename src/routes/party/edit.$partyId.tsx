@@ -9,6 +9,8 @@ import type { PokemonData } from "@/lib/types";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useSessionData } from "@/hooks/useSessionData";
+import { makeRomanNumeral } from "@/lib/utils";
+import { useItemData } from "@/hooks/poke-api/useItemsApiData";
 
 export const Route = createFileRoute("/party/edit/$partyId")({
   component: RouteComponent,
@@ -47,6 +49,7 @@ function RouteComponent() {
 
   const { getPartyPokemonByNumbers } = usePokemonData();
   const { getSingleSession } = useSessionData();
+  const { getHoldableItemListByGeneration } = useItemData();
 
   const { data: teamPokemonApiData } = getPartyPokemonByNumbers(pokemon?.map((p) => p.speciesId) || []);
 
@@ -55,7 +58,13 @@ function RouteComponent() {
 
   const { data: sessionData } = getSingleSession(loaderData.partyData.data?.gameInstance || "");
 
+  const pkmnGameGenString = sessionData?.data?.gameGen
+    ? `generation-${makeRomanNumeral(sessionData.data.gameGen).toLowerCase()}`
+    : undefined;
+
   const pkmnGameName = sessionData?.data?.pkmnGameName;
+
+  const { data: holdableItemsData } = getHoldableItemListByGeneration(pkmnGameGenString);
 
   const handlePokemonUpdate = <K extends keyof PokemonData>(pokemonId: number, column: K, data: PokemonData[K]) => {
     setPokemonData((prev) => {
@@ -231,6 +240,24 @@ function RouteComponent() {
                       />
                     </div>
                   </div>
+                  <div>
+                    <Label htmlFor={`pkmn-${p.id}-held-item`}>Held Item:</Label>
+                    <Select
+                      value={p.heldItem || ""}
+                      onValueChange={(value) => handlePokemonUpdate(p.id, "heldItem", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a held item" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {holdableItemsData?.map((item) => (
+                          <SelectItem key={item.id} value={item.name}>
+                            {item.names.find((n) => n.language.name === "en")?.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </div>
@@ -238,7 +265,7 @@ function RouteComponent() {
         })}
       </div>
       <pre className="text-black">{JSON.stringify(pokemonData, null, 2)}</pre>
-      <pre className="text-black">{JSON.stringify(teamPokemonApiData, null, 2)}</pre>
+      {/* <pre className="text-black">{JSON.stringify(holdableItemsData, null, 2)}</pre> */}
     </div>
   );
 }
